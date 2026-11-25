@@ -28,7 +28,7 @@ The bench runs inside the controller, needs no input, and finishes by itself:
 | P4 | Station logic unchanged; every change listed with its reason | findings table in the README |
 | P5 | Build without errors and warnings | CODESYS `Compile complete -- 0 errors, 0 warnings`; Siemens PLC with alarms `errors=0 warnings=0` (`results/tia_hmi_build.txt`); Logix not compiled, structural check 0 findings |
 | P6 | Code importable into the target tool | PLCopen XML exported, import into Machine Expert not tried; L5X written, import into Logix Designer not tried |
-| P7 | Same operator screen on each platform | **not met.** CODESYS: a visualization bound to station variables compiles (0 errors, 0 warnings), layout from the CODESYS sample, no rendering. Siemens: panel device and network created, connection, tags and screens refused by the import, panel compile 1 error (no start screen). Logix: specification with a generated drawing |
+| P7 | Same operator screen on each platform | **not met.** CODESYS: a visualization bound to station variables compiles (0 errors, 0 warnings), layout from the CODESYS sample, no rendering. Siemens: 36 HMI-internal tags and 4 screens imported, no PLC connection, panel compile 40 errors. Logix: specification with a generated drawing |
 
 ## 4. Architecture of the port
 
@@ -62,7 +62,7 @@ The bench proves the same arithmetic and the same sequence for the same inputs. 
 ## 6. Limits of this work
 
 - CODESYS simulation mode in the development system; not Machine Expert, not a Modicon controller, not a soft PLC with real task timing.
-- No panel runtime, WebVisu or PanelView ran; there is no screenshot of any screen. The WinCC panel has no connection, tags or screens (README).
+- No panel runtime, WebVisu or PanelView ran; there is no screenshot of any screen. The WinCC panel has tags and screens but no PLC connection and does not compile clean (README).
 - The Logix file was not compiled or imported. The interpreter assumes float32 arithmetic and the call rules read in 1756-PM010I; it is not a controller.
 - The Rockwell manuals were read through public copies of 1756-PM010I (Feb 2018) and 1756-RM003P (Dec 2014); Rockwell's own servers refused the request. 1756-RM014 (Import/Export) could not be read.
 - Retention and start-up after a warm or cold reset were not tested on either platform.

@@ -77,8 +77,8 @@ def tag_table(internal=False):
         coding = "IEEE754" if typ == "Real" else "Binary"
         if internal:
             x.append(f'<Hmi.Tag.Tag ID="{ids()}" CompositionName="Tags"><AttributeList><Name>{name}</Name>'
-                     f'</AttributeList><LinkList><DataType TargetID="@OpenLink"><Name>{typ}</Name></DataType>'
-                     f'<HmiDataType TargetID="@OpenLink"><Name>{typ}</Name></HmiDataType></LinkList>'
+                     # no DataType link: with it TIA refused the Real tags ("the Coding property is read-only")
+                     f'</AttributeList><LinkList><HmiDataType TargetID="@OpenLink"><Name>{typ}</Name></HmiDataType></LinkList>'
                      f"<ObjectList>{ml_text(ids, 'Comment', '')}</ObjectList></Hmi.Tag.Tag>")
             continue
         x.append(f'<Hmi.Tag.Tag ID="{ids()}" CompositionName="Tags"><AttributeList>'
@@ -112,9 +112,14 @@ def text_field(ids, name, left, top, w, h, text, size=13):
             f"{font(ids, size)}{ml_text(ids, 'Text', text)}</ObjectList></Hmi.Screen.TextField>")
 
 
+FORMAT = {"Int": "s999999", "DInt": "s9999999999", "Real": "s99999.999", "Bool": "9"}
+TYPE = {n: typ for n, typ, _a, _l in TAGS}
+
+
 def io_field(ids, name, left, top, w, h, tag):
+    # an IO field needs a format pattern that fits the tag (first compile: "The format pattern ... is invalid")
     return (f'<Hmi.Screen.IOField ID="{ids()}" CompositionName="ScreenItems"><AttributeList>'
-            f"{geom(name, left, top, w, h)}<Mode>Output</Mode></AttributeList><ObjectList>{font(ids)}"
+            f"<FormatPattern>{FORMAT[TYPE[tag]]}</FormatPattern>{geom(name, left, top, w, h)}<Mode>Output</Mode></AttributeList><ObjectList>{font(ids)}"
             f'<Hmi.Screen.Property ID="{ids()}" CompositionName="Properties"><AttributeList><Name>ProcessValue</Name></AttributeList>'
             f'<ObjectList><Hmi.Dynamic.TagConnectionDynamic ID="{ids()}" CompositionName="Dynamic"><AttributeList><Indirect>false</Indirect>'
             f'</AttributeList><LinkList><Tag TargetID="@OpenLink"><Name>{tag}</Name></Tag></LinkList>'

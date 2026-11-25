@@ -1,6 +1,6 @@
 # station-control-three-platforms
 
-> **Status: no operator screen is finished.** CODESYS: a visualization bound to station variables compiles, but its layout is the CODESYS sample's. Siemens: the panel device exists, but its connection, tags and screens could not be imported. Allen-Bradley: specification only. Control code and the 20-case proof cover the three platforms as far as the table below says.
+> **Status: no operator screen is finished.** CODESYS: a visualization bound to station variables compiles, but its layout is the CODESYS sample's. Siemens: 36 tags (HMI-internal, not linked to the PLC) and the four screens are imported into the KTP700 Basic, but the panel compile still ends with 40 errors and there is no PLC connection. Allen-Bradley: specification only. Control code and the 20-case proof cover the three platforms as far as the table below says.
 
 One test station, its control blocks moved from Siemens SCL to CODESYS V3 Structured Text and to Allen-Bradley Logix Add-On Instructions: what the port forced, what stayed identical, and the same 20 self-checking test cases as the proof.
 
@@ -11,7 +11,7 @@ One test station, its control blocks moved from Siemens SCL to CODESYS V3 Struct
 > | Platform | Control code | Bench, 20 cases | Operator screen |
 > |---|---|---|---|
 > | Schneider side: CODESYS V3.5 SP22 Patch 1 (the base of EcoStruxure Machine Expert) | **compiled here**, 0 errors, 0 warnings | **executed here** in CODESYS simulation mode: 20 of 20 | a visualization bound to station variables **compiled here** (0 errors, 0 warnings); no screenshot: simulation mode serves no WebVisu |
-> | Siemens: TIA Portal V18, S7-1513 | **compiled here** with the alarm block, 0 errors, 0 warnings; bench compiled and run in S7-PLCSIM in the earlier project | 20 of 20 in the float32 SCL translator (CI); S7-PLCSIM record of the earlier project | **not built**: KTP700 Basic created and networked by Openness, but connection, tags and screens could not be imported; the panel compile stops with 1 error (no start screen) |
+> | Siemens: TIA Portal V18, S7-1513 | **compiled here** with the alarm block, 0 errors, 0 warnings; bench compiled and run in S7-PLCSIM in the earlier project | 20 of 20 in the float32 SCL translator (CI); S7-PLCSIM record of the earlier project | **imported, not compiled clean**: KTP700 Basic with 36 HMI-internal tags and 4 screens; no PLC connection; panel compile `errors=40 warnings=0` |
 > | Allen-Bradley: Studio 5000 Logix Designer | **written, not compiled**: no Rockwell software here | 20 of 20 in a subset interpreter written in this repo (CI), not on a controller | **specification only** |
 >
 > **Not verified:** nothing was opened in Machine Expert, no Modicon controller or Harmony panel was used, nothing ran on a Logix controller or emulator, no panel runtime was started, no real task timing was measured. Pictures: the only one is [docs/img/screen_spec.svg](docs/img/screen_spec.svg), a **generated drawing** of the screen specification, not a screenshot.
@@ -59,7 +59,7 @@ What has to change, and what must stay identical, when the control and the opera
 | Start values | `BEGIN` section | array initialisers | decorated tag data in the L5X | CODESYS executed here; Logix checked here (interpreter reads them) |
 | Strings | NOK reason as a code | as a code | as a code | not verified: no platform shows a text list in a run |
 | Alarms | `Program_Alarm` instances in the CPU (`FB_StationAlarms`) | not built | six `ALMD` instructions, syntax from RM003 pp. 44-46 | Siemens compiled here; Logix read in the vendor manual, not compiled; CODESYS not done |
-| HMI tag addressing | panel tags written absolute into `DB_HMI` (standard access); not imported | visualization reads `PLC_PRG.Bench.Station.Locked` by name | screen tags must be AOI parameters, not locals | Siemens: `DB_HMI` compiled here, tags not imported; CODESYS compiled here; Logix specification |
+| HMI tag addressing | absolute tags into `DB_HMI` written; imported only as HMI-internal tags (no connection) | visualization reads `PLC_PRG.Bench.Station.Locked` by name | screen tags must be AOI parameters, not locals | Siemens: `DB_HMI` compiled here, 36 internal tags and 4 screens imported, panel compile 40 errors; CODESYS compiled here; Logix specification |
 | Scan and task model | bench in OB1, 102 calls | cyclic MainTask, 102 calls | continuous task for the bench, periodic task for the station | CODESYS executed here; S7 earlier record; Logix interpreter only |
 
 ## The Siemens panel: what was built and what is missing
@@ -68,13 +68,13 @@ What has to change, and what must stay identical, when the control and the opera
 
 - S7-1513 with `FB_CurveEval`, `FB_HandleStation`, the alarm block `FB_StationAlarms` (six `Program_Alarm` instances), `DB_HMI` and OB1: `COMPILE PLC Success  errors=0  warnings=0`.
 - A KTP700 Basic (`6AV2 123-2GB03-0AX0`, device version 17.0.0.0; version 18.0.0.0 was not found in the catalogue), both devices on subnet `PN/IE_1` (PLC 192.168.0.1, panel 192.168.0.2).
-- **Missing: the HMI connection, the 36 HMI tags and the four screens.** The import files are in `siemens/hmi/xml/`, generated by `siemens/hmi/make_hmi_xml.py`, in the form of public Openness import code (no schema for these files is in the TIA Portal V18 installation). TIA refused them (`results/tia_hmi_build_attempts.txt`):
-  - connection, two runs: `The value 'SIMATIC S7 1500' for the attribute 'Driver' is not supported.`
-  - fallback with the tags as HMI-internal tags, two runs: `The import of tag TCycle was aborted, because the Coding property is read-only.`
-  - after a refused import, the next call failed with `Access to a disposed object`. The object was in turn the HMI target, the device, the project and the TIA Portal session. So one refused import ends the run, and every later step had to be retried in a new run.
-- With no screen the panel compile ends `COMPILE HMI ... Error  errors=1  warnings=0`, message `No start screen defined or the start screen has been deleted.`
-
-The screens were therefore not imported and not compiled. Their content is the one in the specification and in the import files. There is no picture of a WinCC screen. The WinCC runtime simulator was not started.
+- **Imported, one object per TIA session** (`siemens/scripts/tia_hmi_step.ps1`, record `results/tia_hmi_steps.txt`), because after a refused import every later call failed with `Access to a disposed object` (HMI target, then device, project and TIA Portal session; `results/tia_hmi_build_attempts.txt`):
+  - **36 tags**, as HMI-internal tags (`siemens/hmi/xml/tags_Station_internal.xml`). The wrong part had been the `DataType` link on each tag: with it TIA refused the first Real tag, `The import of tag TCycle was aborted, because the Coding property is read-only`. Without it, `IMPORT ok`.
+  - **4 screens** (Station, Measurement, Alarms, Setup) with text fields, output fields and navigation buttons: `IMPORT ok`. The first compile showed that an output field needs a format pattern (`The format pattern specified for 'VState' is invalid`); with `s999999` (Int), `s9999999999` (DInt) and `9` (Bool) those errors went away.
+- **Not done:**
+  - **No PLC connection.** The driver string was the first wrong value: `SIMATIC S7 1500` is refused (`The value 'SIMATIC S7 1500' for the attribute 'Driver' is not supported`). `S7_1500_OMS` and `S7_1500`, the PLC ids in the installed communication channel files, were no longer reported. But every `InterfaceType` tried was refused (`Ethernet`, none, `PROFINET (X1)`, a dummy): `The value 'Ethernet' of attribute 'InterfaceType' is incompatible with other attributes`. So the tags are HMI-internal and show nothing from the PLC.
+  - **The panel compile ends `COMPILE HMI Error errors=40 warnings=0`:** 23 times `The format pattern specified for '...' is invalid`, all on Real fields (pattern `s99999.999`); 16 times `The parameter of a function is not available for trigger Nav..., event 'Click'. This parameter must be assigned a valid value` (the `ActivateScreen` parameter); once `No start screen defined`. The start screen was not set, because the time box ended.
+- There is no picture of a WinCC screen. The WinCC runtime simulator was not started.
 
 
 The short systems-engineering dossier is [DOSSIER.md](DOSSIER.md). The Logix details, the manuals read and what each check proves: [logix/README.md](logix/README.md). The screen specification: [logix/PANELVIEW_SPEC.md](logix/PANELVIEW_SPEC.md), drawn in [docs/img/screen_spec.svg](docs/img/screen_spec.svg) (generated).

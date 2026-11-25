@@ -1,0 +1,206 @@
+One import per TIA Portal V18 session (siemens/scripts/tia_hmi_step.ps1), into the project built by tia_hmi.ps1.
+Variants of siemens/hmi/xml/connection.xml that were tried (not kept in the repo):
+  conn_S7_1500_OMS.xml  Driver S7_1500_OMS (no longer reported), InterfaceType Ethernet (refused: incompatible)
+  conn2.xml             as above without InterfaceType (refused: attribute missing)
+  conn3.xml             as conn_S7_1500_OMS without Online (refused: Ethernet incompatible)
+  conn4.xml             InterfaceType Xyz (refused: incompatible; the error does not list valid values)
+  conn5.xml             InterfaceType "PROFINET (X1)" (refused)
+  conn_S7_1500.xml      Driver S7_1500, InterfaceType Ethernet (refused: Ethernet incompatible)
+  tags_int2.xml         = siemens/hmi/xml/tags_Station_internal.xml (HMI-internal tags, no DataType link)
+The four screens were imported in one session (file names separated by ';'); the header shows the last.
+
+﻿---- 2026-11-25 18:29  step connection conn_S7_1500_OMS.xml
+IMPORT FAIL connection conn_S7_1500_OMS.xml: Error when calling method 'Import' of type 'Siemens.Engineering.Hmi.Communication.ConnectionComposition'.  Cannot create the 'Hmi.Communication.Connection' object with Simatic ML ID '0' at line number 5 at line position 4.  Error when calling method 'Create' of type 'Siemens.Engineering.Hmi.Communication.ConnectionComposition'.  The value 'Ethernet' of attribute 'InterfaceType' is incompatible with other attributes. The value 'Ethernet' of attribute 'InterfaceType' is incompatible with other attributes.
+
+---- 2026-11-25 18:31  step connection conn2.xml
+IMPORT FAIL connection conn2.xml: Error when calling method 'Import' of type 'Siemens.Engineering.Hmi.Communication.ConnectionComposition'.  Cannot create the 'Hmi.Communication.Connection' object with Simatic ML ID '0' at line number 5 at line position 4.  Error when calling method 'Create' of type 'Siemens.Engineering.Hmi.Communication.ConnectionComposition'.  The attribute 'InterfaceType' is missing in the connection import file. The attribute 'InterfaceType' is missing in the connection import file.
+
+---- 2026-11-25 18:33  step connection conn3.xml
+IMPORT FAIL connection conn3.xml: Error when calling method 'Import' of type 'Siemens.Engineering.Hmi.Communication.ConnectionComposition'.  Cannot create the 'Hmi.Communication.Connection' object with Simatic ML ID '0' at line number 5 at line position 4.  Error when calling method 'Create' of type 'Siemens.Engineering.Hmi.Communication.ConnectionComposition'.  The value 'Ethernet' of attribute 'InterfaceType' is incompatible with other attributes. The value 'Ethernet' of attribute 'InterfaceType' is incompatible with other attributes.
+
+---- 2026-11-25 18:35  step connection conn4.xml
+IMPORT FAIL connection conn4.xml: Error when calling method 'Import' of type 'Siemens.Engineering.Hmi.Communication.ConnectionComposition'.  Cannot create the 'Hmi.Communication.Connection' object with Simatic ML ID '0' at line number 5 at line position 4.  Error when calling method 'Create' of type 'Siemens.Engineering.Hmi.Communication.ConnectionComposition'.  The value 'Xyz' of attribute 'InterfaceType' is incompatible with other attributes. The value 'Xyz' of attribute 'InterfaceType' is incompatible with other attributes.
+
+---- 2026-11-25 18:38  step connection conn5.xml
+IMPORT FAIL connection conn5.xml: Error when calling method 'Import' of type 'Siemens.Engineering.Hmi.Communication.ConnectionComposition'.  Cannot create the 'Hmi.Communication.Connection' object with Simatic ML ID '0' at line number 5 at line position 4.  Error when calling method 'Create' of type 'Siemens.Engineering.Hmi.Communication.ConnectionComposition'.  The value 'PROFINET (X1)' of attribute 'InterfaceType' is incompatible with other attributes. The value 'PROFINET (X1)' of attribute 'InterfaceType' is incompatible with other attributes.
+
+---- 2026-11-25 18:40  step connection conn_S7_1500.xml
+IMPORT FAIL connection conn_S7_1500.xml: Error when calling method 'Import' of type 'Siemens.Engineering.Hmi.Communication.ConnectionComposition'.  Cannot create the 'Hmi.Communication.Connection' object with Simatic ML ID '0' at line number 5 at line position 4.  Error when calling method 'Create' of type 'Siemens.Engineering.Hmi.Communication.ConnectionComposition'.  The value 'Ethernet' of attribute 'InterfaceType' is incompatible with other attributes. The value 'Ethernet' of attribute 'InterfaceType' is incompatible with other attributes.
+
+---- 2026-11-25 18:42  step tags tags_int2.xml
+IMPORT ok   tags tags_int2.xml
+  tag table Default tag table: 0 tags
+  tag table Station: 36 tags
+COMPILE HMI Error  errors=1  warnings=0
+  Error  HMI_1  
+    Information    Software compilation started.
+    Error  Runtime settings  
+      Error    No start screen defined or the start screen has been deleted.
+    Information    Software compilation completed (device version: 17.0.0.0).
+  Error    Compiling aborted (errors: 1; warnings: 0)
+COMPILE PLC Success  errors=0  warnings=0
+  Information  PLC_1  
+    Information  Program blocks  
+      Information    No block was compiled. All blocks are up-to-date.
+  Success    Compiling finished (errors: 0; warnings: 0)
+
+---- 2026-11-25 18:46  step screen screen_Station.xml
+IMPORT ok   screen screen_Station.xml
+  tag table Default tag table: 0 tags
+  tag table Station: 36 tags
+  screen Station
+COMPILE HMI Error  errors=17  warnings=0
+  Error  HMI_1  
+    Information    Software compilation started.
+    Error  Screens  
+      Error  Station  
+        Error  VPartPresent  
+          Error    The format pattern specified for 'VPartPresent' is invalid.
+        Error  VLocked  
+          Error    The format pattern specified for 'VLocked' is invalid.
+        Error  VCntConsecNok  
+          Error    The format pattern specified for 'VCntConsecNok' is invalid.
+        Error  VCntRejectConfirmed  
+          Error    The format pattern specified for 'VCntRejectConfirmed' is invalid.
+        Error  VCntNok  
+          Error    The format pattern specified for 'VCntNok' is invalid.
+        Error  VCntOk  
+          Error    The format pattern specified for 'VCntOk' is invalid.
+        Error  VCntTotal  
+          Error    The format pattern specified for 'VCntTotal' is invalid.
+        Error  VTCycle  
+          Error    The format pattern specified for 'VTCycle' is invalid.
+        Error  VFaultCode  
+          Error    The format pattern specified for 'VFaultCode' is invalid.
+        Error  VNokCode  
+          Error    The format pattern specified for 'VNokCode' is invalid.
+        Error  VVerdict  
+          Error    The format pattern specified for 'VVerdict' is invalid.
+        Error  VState  
+          Error    The format pattern specified for 'VState' is invalid.
+        Error  NavSetup  
+          Error    The parameter of a function is not available for trigger NavSetup, event 'Click'. The referenced object does not exist.
+        Error  NavAlarms  
+          Error    The parameter of a function is not available for trigger NavAlarms, event 'Click'. The referenced object does not exist.
+        Error  NavMeasurement  
+          Error    The parameter of a function is not available for trigger NavMeasurement, event 'Click'. The referenced object does not exist.
+        Error  NavStation  
+          Error    The parameter of a function is not available for trigger NavStation, event 'Click'. This parameter must be assigned a valid value.
+    Error  Runtime settings  
+      Error    No start screen defined or the start screen has been deleted.
+    Information    Software compilation completed (device version: 17.0.0.0).
+  Error    Compiling aborted (errors: 17; warnings: 0)
+COMPILE PLC Success  errors=0  warnings=0
+  Information  PLC_1  
+    Information  Program blocks  
+      Information    No block was compiled. All blocks are up-to-date.
+  Success    Compiling finished (errors: 0; warnings: 0)
+
+---- 2026-11-25 18:53  step screen screen_Setup.xml
+  imported screen_Station.xml
+  imported screen_Measurement.xml
+  imported screen_Alarms.xml
+  imported screen_Setup.xml
+IMPORT ok   screen screen_Setup.xml
+  tag table Default tag table: 0 tags
+  tag table Station: 36 tags
+  screen Station
+  screen Measurement
+  screen Alarms
+  screen Setup
+COMPILE HMI Error  errors=40  warnings=0
+  Error  HMI_1  
+    Information    Software compilation started.
+    Error  Screens  
+      Error  Measurement  
+        Error  HiXStop  
+          Error    The format pattern specified for 'HiXStop' is invalid.
+        Error  VXStop  
+          Error    The format pattern specified for 'VXStop' is invalid.
+        Error  LoXStop  
+          Error    The format pattern specified for 'LoXStop' is invalid.
+        Error  VFStep  
+          Error    The format pattern specified for 'VFStep' is invalid.
+        Error  LoFStep  
+          Error    The format pattern specified for 'LoFStep' is invalid.
+        Error  HiXPeak  
+          Error    The format pattern specified for 'HiXPeak' is invalid.
+        Error  VXPeak  
+          Error    The format pattern specified for 'VXPeak' is invalid.
+        Error  LoXPeak  
+          Error    The format pattern specified for 'LoXPeak' is invalid.
+        Error  HiFPeak  
+          Error    The format pattern specified for 'HiFPeak' is invalid.
+        Error  VFPeak  
+          Error    The format pattern specified for 'VFPeak' is invalid.
+        Error  LoFPeak  
+          Error    The format pattern specified for 'LoFPeak' is invalid.
+        Error  HiFpG2  
+          Error    The format pattern specified for 'HiFpG2' is invalid.
+        Error  VFpG2  
+          Error    The format pattern specified for 'VFpG2' is invalid.
+        Error  LoFpG2  
+          Error    The format pattern specified for 'LoFpG2' is invalid.
+        Error  HiFHyst  
+          Error    The format pattern specified for 'HiFHyst' is invalid.
+        Error  VFHyst  
+          Error    The format pattern specified for 'VFHyst' is invalid.
+        Error  LoFHyst  
+          Error    The format pattern specified for 'LoFHyst' is invalid.
+        Error  HiFMean  
+          Error    The format pattern specified for 'HiFMean' is invalid.
+        Error  VFMean  
+          Error    The format pattern specified for 'VFMean' is invalid.
+        Error  LoFMean  
+          Error    The format pattern specified for 'LoFMean' is invalid.
+        Error  VFrG1  
+          Error    The format pattern specified for 'VFrG1' is invalid.
+        Error  VFpG1  
+          Error    The format pattern specified for 'VFpG1' is invalid.
+        Error  NavSetup  
+          Error    The parameter of a function is not available for trigger NavSetup, event 'Click'. This parameter must be assigned a valid value.
+        Error  NavAlarms  
+          Error    The parameter of a function is not available for trigger NavAlarms, event 'Click'. This parameter must be assigned a valid value.
+        Error  NavMeasurement  
+          Error    The parameter of a function is not available for trigger NavMeasurement, event 'Click'. This parameter must be assigned a valid value.
+        Error  NavStation  
+          Error    The parameter of a function is not available for trigger NavStation, event 'Click'. This parameter must be assigned a valid value.
+      Error  Station  
+        Error  VTCycle  
+          Error    The format pattern specified for 'VTCycle' is invalid.
+        Error  NavSetup  
+          Error    The parameter of a function is not available for trigger NavSetup, event 'Click'. This parameter must be assigned a valid value.
+        Error  NavAlarms  
+          Error    The parameter of a function is not available for trigger NavAlarms, event 'Click'. This parameter must be assigned a valid value.
+        Error  NavMeasurement  
+          Error    The parameter of a function is not available for trigger NavMeasurement, event 'Click'. This parameter must be assigned a valid value.
+        Error  NavStation  
+          Error    The parameter of a function is not available for trigger NavStation, event 'Click'. This parameter must be assigned a valid value.
+      Error  Setup  
+        Error  NavSetup  
+          Error    The parameter of a function is not available for trigger NavSetup, event 'Click'. This parameter must be assigned a valid value.
+        Error  NavAlarms  
+          Error    The parameter of a function is not available for trigger NavAlarms, event 'Click'. This parameter must be assigned a valid value.
+        Error  NavMeasurement  
+          Error    The parameter of a function is not available for trigger NavMeasurement, event 'Click'. This parameter must be assigned a valid value.
+        Error  NavStation  
+          Error    The parameter of a function is not available for trigger NavStation, event 'Click'. This parameter must be assigned a valid value.
+      Error  Alarms  
+        Error  NavSetup  
+          Error    The parameter of a function is not available for trigger NavSetup, event 'Click'. This parameter must be assigned a valid value.
+        Error  NavAlarms  
+          Error    The parameter of a function is not available for trigger NavAlarms, event 'Click'. This parameter must be assigned a valid value.
+        Error  NavMeasurement  
+          Error    The parameter of a function is not available for trigger NavMeasurement, event 'Click'. This parameter must be assigned a valid value.
+        Error  NavStation  
+          Error    The parameter of a function is not available for trigger NavStation, event 'Click'. This parameter must be assigned a valid value.
+    Error  Runtime settings  
+      Error    No start screen defined or the start screen has been deleted.
+    Information    Software compilation completed (device version: 17.0.0.0).
+  Error    Compiling aborted (errors: 40; warnings: 0)
+COMPILE PLC Success  errors=0  warnings=0
+  Information  PLC_1  
+    Information  Program blocks  
+      Information    No block was compiled. All blocks are up-to-date.
+  Success    Compiling finished (errors: 0; warnings: 0)
+
