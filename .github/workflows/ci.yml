@@ -18,3 +18,7 @@ jobs:
         run: python -m pytest -q
       - name: PLCopen XML is well-formed
         run: python -c "import glob, xml.etree.ElementTree as ET; [ET.parse(f) for f in glob.glob('codesys/plcopen/*.xml')]; print('ok')"
+      - name: Logix L5X - structural check (not Logix Designer; see logix/README.md)
+        run: python tools/l5x_check.py logix/StationPort.L5X
+      - name: Logix L5X - the 20 bench cases in the subset interpreter (not a controller)
+        run: python tools/logix_st.py > /dev/null
