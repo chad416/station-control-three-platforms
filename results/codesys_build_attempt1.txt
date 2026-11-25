@@ -1,0 +1,217 @@
+CODESYS V3.5 SP22 Patch 1, script engine, no user interface: ui_present=False
+date 2026-11-25 14:38
+device DeviceID(type=4096, Id='0000 0004', Version='3.5.22.10')
+library in template: Standard, * (System)
+library in template: #BreakpointLogging
+added GVL_TestData (gvl)
+added GVL_TestResult (gvl)
+added FB_CurveEval (fb)
+added FB_HandleStation (fb)
+added FB_TestPlant (fb)
+added FB_TestBench (fb)
+added PLC_PRG (prg)
+task MainTask interval t#10ms
+--- build messages ---
+Build | Text | CNone |  | ------ Build started: Application: Station_PLC.Application -------
+Build | Text | CNone |  | Typify code...
+Build | Error | C9 | FB_HandleStation | Unexpected token 'sT' found
+Build | Error | C189 | FB_HandleStation | ';' expected instead of ':'
+Build | Error | C9 | FB_HandleStation | Unexpected token ':' found
+Build | Error | C189 | FB_HandleStation | ';' expected instead of 'Real'
+Build | Error | C9 | FB_HandleStation | Unexpected token 'Real' found
+Build | Error | C9 | FB_TestBench | Unexpected token 'sT' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of ':'
+Build | Error | C9 | FB_TestBench | Unexpected token ':' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of 'Int'
+Build | Error | C9 | FB_TestBench | Unexpected token 'Int' found
+Build | Error | C9 | FB_TestBench | Unexpected token 'sT' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of ':='
+Build | Error | C9 | FB_TestBench | Unexpected token ':=' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of '0'
+Build | Error | C9 | FB_TestBench | Unexpected token '0' found
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C9 | FB_TestBench | Unexpected token 'sT' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of ':='
+Build | Error | C9 | FB_TestBench | Unexpected token ':=' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of 'sT'
+Build | Error | C9 | FB_TestBench | Unexpected token 'sT' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of '+'
+Build | Error | C9 | FB_TestBench | Unexpected token '+' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of '1'
+Build | Error | C9 | FB_TestBench | Unexpected token '1' found
+Build | Error | C9 | FB_TestBench | Unexpected token 'sT' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of ':='
+Build | Error | C9 | FB_TestBench | Unexpected token ':=' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of '0'
+Build | Error | C9 | FB_TestBench | Unexpected token '0' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of '11'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C9 | FB_TestBench | Unexpected token 'sT' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of ':='
+Build | Error | C9 | FB_TestBench | Unexpected token ':=' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of '0'
+Build | Error | C9 | FB_TestBench | Unexpected token '0' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of 'END_IF'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C9 | FB_TestBench | Unexpected token 'sT' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of ':='
+Build | Error | C9 | FB_TestBench | Unexpected token ':=' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of '0'
+Build | Error | C9 | FB_TestBench | Unexpected token '0' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of 'END_IF'
+Build | Error | C9 | FB_TestBench | Unexpected token 'sT' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of ':='
+Build | Error | C9 | FB_TestBench | Unexpected token ':=' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of '0'
+Build | Error | C9 | FB_TestBench | Unexpected token '0' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of '21'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C9 | FB_TestBench | Unexpected token 'sT' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of ':='
+Build | Error | C9 | FB_TestBench | Unexpected token ':=' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of '0'
+Build | Error | C9 | FB_TestBench | Unexpected token '0' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of 'END_IF'
+Build | Error | C189 | FB_TestBench | ';' expected instead of 'sT'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C9 | FB_TestBench | Unexpected token 'sT' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of ':='
+Build | Error | C9 | FB_TestBench | Unexpected token ':=' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of '0'
+Build | Error | C9 | FB_TestBench | Unexpected token '0' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of 'END_IF'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C9 | FB_TestBench | Unexpected token 'sT' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of ':='
+Build | Error | C9 | FB_TestBench | Unexpected token ':=' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of '0'
+Build | Error | C9 | FB_TestBench | Unexpected token '0' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of 'END_IF'
+Build | Error | C189 | FB_TestBench | ';' expected instead of 'sT'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C9 | FB_TestBench | Unexpected token 'sT' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of ':='
+Build | Error | C9 | FB_TestBench | Unexpected token ':=' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of '0'
+Build | Error | C9 | FB_TestBench | Unexpected token '0' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of 'END_IF'
+Build | Error | C9 | FB_TestBench | Unexpected token 'sT' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of ':='
+Build | Error | C9 | FB_TestBench | Unexpected token ':=' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of '0'
+Build | Error | C9 | FB_TestBench | Unexpected token '0' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of '31'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C9 | FB_TestBench | Unexpected token 'sT' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of ':='
+Build | Error | C9 | FB_TestBench | Unexpected token ':=' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of '0'
+Build | Error | C9 | FB_TestBench | Unexpected token '0' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of 'END_IF'
+Build | Error | C189 | FB_TestBench | ';' expected instead of 'sT'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C9 | FB_TestBench | Unexpected token 'sT' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of ':='
+Build | Error | C9 | FB_TestBench | Unexpected token ':=' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of '0'
+Build | Error | C9 | FB_TestBench | Unexpected token '0' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of 'END_IF'
+Build | Error | C9 | FB_TestBench | Unexpected token 'sT' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of ':='
+Build | Error | C9 | FB_TestBench | Unexpected token ':=' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of '0'
+Build | Error | C9 | FB_TestBench | Unexpected token '0' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of '41'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C9 | FB_TestBench | Unexpected token 'sT' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of ':='
+Build | Error | C9 | FB_TestBench | Unexpected token ':=' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of '0'
+Build | Error | C9 | FB_TestBench | Unexpected token '0' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of 'END_IF'
+Build | Error | C189 | FB_TestBench | ';' expected instead of 'sT'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C9 | FB_TestBench | Unexpected token 'sT' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of ':='
+Build | Error | C9 | FB_TestBench | Unexpected token ':=' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of '0'
+Build | Error | C9 | FB_TestBench | Unexpected token '0' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of 'END_IF'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C9 | FB_TestBench | Unexpected token 'sT' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of ':='
+Build | Error | C9 | FB_TestBench | Unexpected token ':=' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of '0'
+Build | Error | C9 | FB_TestBench | Unexpected token '0' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of 'END_IF'
+Build | Error | C189 | FB_TestBench | ';' expected instead of 'sT'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C9 | FB_TestBench | Unexpected token 'sT' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of ':='
+Build | Error | C9 | FB_TestBench | Unexpected token ':=' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of '0'
+Build | Error | C9 | FB_TestBench | Unexpected token '0' found
+Build | Error | C189 | FB_TestBench | ';' expected instead of 'END_IF'
+Build | Error | C7 | FB_TestBench | Expression expected instead of 'sT'
+Build | Error | C9 | FB_HandleStation | Unexpected token 'sT' found
+Build | Error | C189 | FB_HandleStation | ';' expected instead of ':='
+Build | Error | C9 | FB_HandleStation | Unexpected token ':=' found
+Build | Error | C189 | FB_HandleStation | ';' expected instead of 'sT'
+Build | Error | C9 | FB_HandleStation | Unexpected token 'sT' found
+Build | Error | C189 | FB_HandleStation | ';' expected instead of '+'
+Build | Error | C9 | FB_HandleStation | Unexpected token '+' found
+Build | Error | C189 | FB_HandleStation | ';' expected instead of 'CycleTime'
+Build | Warning | C139 | FB_HandleStation | The code 'CycleTime;
+' has no effect. Is this the intent?
+Build | Error | C9 | FB_HandleStation | Unexpected token 'sT' found
+Build | Error | C189 | FB_HandleStation | ';' expected instead of ':='
+Build | Error | C9 | FB_HandleStation | Unexpected token ':=' found
+Build | Error | C189 | FB_HandleStation | ';' expected instead of '0.0'
+Build | Error | C9 | FB_HandleStation | Unexpected token '0.0' found
+Build | Error | C7 | FB_HandleStation | Expression expected instead of 'sT'
+Build | Error | C9 | FB_HandleStation | Unexpected token 'sT' found
+Build | Error | C189 | FB_HandleStation | ';' expected instead of ':='
+Build | Error | C9 | FB_HandleStation | Unexpected token ':=' found
+Build | Error | C189 | FB_HandleStation | ';' expected instead of '0.0'
+Build | Error | C9 | FB_HandleStation | Unexpected token '0.0' found
+Build | Error | C9 | FB_HandleStation | Unexpected token 'sT' found
+Build | Error | C189 | FB_HandleStation | ';' expected instead of ':='
+Build | Error | C9 | FB_HandleStation | Unexpected token ':=' found
+Build | Error | C189 | FB_HandleStation | ';' expected instead of '0.0'
+Build | Error | C9 | FB_HandleStation | Unexpected token '0.0' found
+Build | Error | C7 | FB_HandleStation | Expression expected instead of 'sT'
+Build | Error | C7 | FB_HandleStation | Expression expected instead of 'sT'
+Build | Error | C9 | FB_HandleStation | Unexpected token 'sT' found
+Build | Error | C189 | FB_HandleStation | ';' expected instead of ':='
+Build | Error | C9 | FB_HandleStation | Unexpected token ':=' found
+Build | Error | C189 | FB_HandleStation | ';' expected instead of '0.0'
+Build | Error | C9 | FB_HandleStation | Unexpected token '0.0' found
+Build | Error | C9 | FB_HandleStation | Unexpected token 'sT' found
+Build | Error | C189 | FB_HandleStation | ';' expected instead of ':='
+Build | Error | C9 | FB_HandleStation | Unexpected token ':=' found
+Build | Error | C189 | FB_HandleStation | ';' expected instead of '0.0'
+Build | Error | C9 | FB_HandleStation | Unexpected token '0.0' found
+Build | Error | C189 | FB_HandleStation | ';' expected instead of 'sT'
+Build | Error | C7 | FB_HandleStation | Expression expected instead of 'sT'
+Build | Error | C9 | FB_HandleStation | Unexpected token 'sT' found
+Build | Error | C189 | FB_HandleStation | ';' expected instead of ':='
+Build | Error | C9 | FB_HandleStation | Unexpected token ':=' found
+Build | Error | C189 | FB_HandleStation | ';' expected instead of '0.0'
+Build | Error | C9 | FB_HandleStation | Unexpected token '0.0' found
+Build | Text | CNone |  | Compile complete -- 194 errors, 1 warnings
+Additional code checks | Text | SANone |  | Additional code checks ...
+Additional code checks | Text | SANone |  | Additional code checks complete -- 0 errors
+BUILD errors=194 warnings=1
+PLCopen XML exported to codesys/plcopen/

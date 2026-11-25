@@ -1,0 +1,140 @@
+{
+ "bench": {
+  "CasesFailed": "INT#0", 
+  "CasesPassed": "INT#20", 
+  "AllPassed": "TRUE", 
+  "CasesTotal": "INT#20", 
+  "Done": "TRUE", 
+  "MaxFeatError": "REAL#9.536743E-07", 
+  "BenchCalls": "DINT#102", 
+  "FirstFailedCase": "INT#0", 
+  "CasesRun": "INT#20", 
+  "FirstFailedCheck": "INT#0"
+ }, 
+ "build": {
+  "warnings": 0, 
+  "errors": 0
+ }, 
+ "cases": [
+  {
+   "check": "INT#0", 
+   "nok": "INT#0", 
+   "pass": "TRUE", 
+   "case": 1
+  }, 
+  {
+   "check": "INT#0", 
+   "nok": "INT#0", 
+   "pass": "TRUE", 
+   "case": 2
+  }, 
+  {
+   "check": "INT#0", 
+   "nok": "INT#2", 
+   "pass": "TRUE", 
+   "case": 3
+  }, 
+  {
+   "check": "INT#0", 
+   "nok": "INT#2", 
+   "pass": "TRUE", 
+   "case": 4
+  }, 
+  {
+   "check": "INT#0", 
+   "nok": "INT#2", 
+   "pass": "TRUE", 
+   "case": 5
+  }, 
+  {
+   "check": "INT#0", 
+   "nok": "INT#3", 
+   "pass": "TRUE", 
+   "case": 6
+  }, 
+  {
+   "check": "INT#0", 
+   "nok": "INT#5", 
+   "pass": "TRUE", 
+   "case": 7
+  }, 
+  {
+   "check": "INT#0", 
+   "nok": "INT#2", 
+   "pass": "TRUE", 
+   "case": 8
+  }, 
+  {
+   "check": "INT#0", 
+   "nok": "INT#9", 
+   "pass": "TRUE", 
+   "case": 9
+  }, 
+  {
+   "check": "INT#0", 
+   "nok": "INT#2", 
+   "pass": "TRUE", 
+   "case": 10
+  }, 
+  {
+   "check": "INT#0", 
+   "nok": "INT#0", 
+   "pass": "TRUE", 
+   "case": 11
+  }, 
+  {
+   "check": "INT#0", 
+   "nok": "INT#0", 
+   "pass": "TRUE", 
+   "case": 12
+  }, 
+  {
+   "check": "INT#0", 
+   "nok": "INT#0", 
+   "pass": "TRUE", 
+   "case": 13
+  }, 
+  {
+   "check": "INT#0", 
+   "nok": "INT#0", 
+   "pass": "TRUE", 
+   "case": 14
+  }, 
+  {
+   "check": "INT#0", 
+   "nok": "INT#0", 
+   "pass": "TRUE", 
+   "case": 15
+  }, 
+  {
+   "check": "INT#0", 
+   "nok": "INT#20", 
+   "pass": "TRUE", 
+   "case": 16
+  }, 
+  {
+   "check": "INT#0", 
+   "nok": "INT#20", 
+   "pass": "TRUE", 
+   "case": 17
+  }, 
+  {
+   "check": "INT#0", 
+   "nok": "INT#5", 
+   "pass": "TRUE", 
+   "case": 18
+  }, 
+  {
+   "check": "INT#0", 
+   "nok": "INT#5", 
+   "pass": "TRUE", 
+   "case": 19
+  }, 
+  {
+   "check": "INT#0", 
+   "nok": "INT#0", 
+   "pass": "TRUE", 
+   "case": 20
+  }
+ ]
+}

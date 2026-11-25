@@ -1,0 +1,20 @@
+name: ci
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Siemens sources in the SCL translator, CODESYS test data, CODESYS run record
+        run: python -m pytest -q
+      - name: PLCopen XML is well-formed
+        run: python -c "import glob, xml.etree.ElementTree as ET; [ET.parse(f) for f in glob.glob('codesys/plcopen/*.xml')]; print('ok')"

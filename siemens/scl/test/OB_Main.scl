@@ -1,0 +1,19 @@
+// Test bench only: instance of the bench and the program-cycle OB that calls it.
+DATA_BLOCK "InstTestBench"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+NON_RETAIN
+"FB_TestBench"
+
+BEGIN
+
+END_DATA_BLOCK
+
+ORGANIZATION_BLOCK "Main"
+TITLE = Test bench: runs by itself after the CPU goes to RUN
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+
+BEGIN
+	"InstTestBench"();
+END_ORGANIZATION_BLOCK

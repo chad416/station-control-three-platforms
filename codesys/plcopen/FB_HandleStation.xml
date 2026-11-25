@@ -1,0 +1,783 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://www.plcopen.org/xml/tc6_0200">
+  <fileHeader companyName="" productName="CODESYS" productVersion="CODESYS V3.5 SP22 Patch 1" creationDateTime="2026-11-25T17:27:32.309646" />
+  <contentHeader name="station_cds.project" modificationDateTime="2026-11-25T17:27:31.3827148">
+    <coordinateInfo>
+      <fbd>
+        <scaling x="1" y="1" />
+      </fbd>
+      <ld>
+        <scaling x="1" y="1" />
+      </ld>
+      <sfc>
+        <scaling x="1" y="1" />
+      </sfc>
+    </coordinateInfo>
+    <addData>
+      <data name="http://www.3s-software.com/plcopenxml/projectinformation" handleUnknown="implementation">
+        <ProjectInformation />
+      </data>
+    </addData>
+  </contentHeader>
+  <types>
+    <dataTypes />
+    <pous>
+      <pou name="FB_HandleStation" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="CycleTime">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="0.002" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> s</xhtml>
+              </documentation>
+            </variable>
+            <variable name="SafetyOk">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="DriveOk">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="AckFault">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="StartEnable">
+              <type>
+                <BOOL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> release from the line</xhtml>
+              </documentation>
+            </variable>
+            <variable name="PartPresent">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="SensLH">
+              <type>
+                <BOOL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> variant sensor that only an LH unit covers</xhtml>
+              </documentation>
+            </variable>
+            <variable name="SensRH">
+              <type>
+                <BOOL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> variant sensor that only an RH unit covers</xhtml>
+              </documentation>
+            </variable>
+            <variable name="VariantLH">
+              <type>
+                <BOOL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> recipe: TRUE = LH units are being built</xhtml>
+              </documentation>
+            </variable>
+            <variable name="ClampClosed">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="ClampOpen">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="RejectChute">
+              <type>
+                <BOOL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> light barrier in the reject chute</xhtml>
+              </documentation>
+            </variable>
+            <variable name="Pos">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> mm, axis position, 0 = home</xhtml>
+              </documentation>
+            </variable>
+            <variable name="Force">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> N, load cell</xhtml>
+              </documentation>
+            </variable>
+            <variable name="VPull">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="50.0" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> mm/s</xhtml>
+              </documentation>
+            </variable>
+            <variable name="VHome">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="150.0" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> mm/s</xhtml>
+              </documentation>
+            </variable>
+            <variable name="FTouch">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="1.5" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> N</xhtml>
+              </documentation>
+            </variable>
+            <variable name="FRev">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="40.0" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> N</xhtml>
+              </documentation>
+            </variable>
+            <variable name="FAbsMax">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="60.0" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> N, protects the painted part</xhtml>
+              </documentation>
+            </variable>
+            <variable name="XMax">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="38.0" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> mm</xhtml>
+              </documentation>
+            </variable>
+            <variable name="TouchLo">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="3.0" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> mm, window of the touch position</xhtml>
+              </documentation>
+            </variable>
+            <variable name="TouchHi">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="7.0" />
+              </initialValue>
+            </variable>
+            <variable name="Compliance">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="0.025" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> mm/N, rig deflection taken out of the travel</xhtml>
+              </documentation>
+            </variable>
+            <variable name="TareTol">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="0.5" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> N</xhtml>
+              </documentation>
+            </variable>
+            <variable name="TPresent">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="0.1" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> s</xhtml>
+              </documentation>
+            </variable>
+            <variable name="TClampMax">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="1.0" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> s</xhtml>
+              </documentation>
+            </variable>
+            <variable name="TRejectWarn">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="30.0" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> s</xhtml>
+              </documentation>
+            </variable>
+            <variable name="MaxConsecNok">
+              <type>
+                <INT />
+              </type>
+              <initialValue>
+                <simpleValue value="3" />
+              </initialValue>
+            </variable>
+          </inputVars>
+          <inOutVars>
+            <variable name="Rcp">
+              <type>
+                <derived name="ST_EvalRecipe" />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> evaluation recipe, copied into Eval at every tare</xhtml>
+              </documentation>
+            </variable>
+          </inOutVars>
+          <outputVars>
+            <variable name="QClamp">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="QDriveEnable">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="QVel">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> mm/s, positive = pull</xhtml>
+              </documentation>
+            </variable>
+            <variable name="QLampOk">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="QLampNok">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="QCallOperator">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="State">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="Verdict">
+              <type>
+                <INT />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> 0 none, 1 OK, 2 NOK</xhtml>
+              </documentation>
+            </variable>
+            <variable name="NokCode">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="FaultCode">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="Locked">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="RigCheckRequired">
+              <type>
+                <BOOL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> too many rejects in a row: run the master part</xhtml>
+              </documentation>
+            </variable>
+            <variable name="XTravel">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> mm</xhtml>
+              </documentation>
+            </variable>
+            <variable name="FNet">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> N</xhtml>
+              </documentation>
+            </variable>
+            <variable name="TCycle">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> s, clamp to verdict of the last part</xhtml>
+              </documentation>
+            </variable>
+            <variable name="CntTotal">
+              <type>
+                <DINT />
+              </type>
+            </variable>
+            <variable name="CntOk">
+              <type>
+                <DINT />
+              </type>
+            </variable>
+            <variable name="CntNok">
+              <type>
+                <DINT />
+              </type>
+            </variable>
+            <variable name="CntRejectConfirmed">
+              <type>
+                <DINT />
+              </type>
+            </variable>
+            <variable name="CntConsecNok">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="CntByCode">
+              <type>
+                <array>
+                  <dimension lower="0" upper="31" />
+                  <baseType>
+                    <DINT />
+                  </baseType>
+                </array>
+              </type>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="Eval">
+              <type>
+                <derived name="FB_CurveEval" />
+              </type>
+            </variable>
+            <variable name="sTim">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="sTCycle">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="sTare">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="sTouchPos">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="sFTouch">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="sPreNok">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="sPartGone">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="sChutePrev">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="sInTest">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="sWasLocked">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="sState">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="sRigCheckRequired">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="sCntTotal">
+              <type>
+                <DINT />
+              </type>
+            </variable>
+            <variable name="sCntOk">
+              <type>
+                <DINT />
+              </type>
+            </variable>
+            <variable name="sCntNok">
+              <type>
+                <DINT />
+              </type>
+            </variable>
+            <variable name="sCntRejectConfirmed">
+              <type>
+                <DINT />
+              </type>
+            </variable>
+            <variable name="sCntConsecNok">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="sCntByCode">
+              <type>
+                <array>
+                  <dimension lower="0" upper="31" />
+                  <baseType>
+                    <DINT />
+                  </baseType>
+                </array>
+              </type>
+            </variable>
+          </localVars>
+          <tempVars>
+            <variable name="tVariantOk">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="tChuteEdge">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="tCode">
+              <type>
+                <INT />
+              </type>
+            </variable>
+          </tempVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml xmlns="http://www.w3.org/1999/xhtml">    {region "Inputs"}
+        FNet := Force - sTare;
+        tChuteEdge := RejectChute AND NOT sChutePrev;
+        sChutePrev := RejectChute;
+        sTim := sTim + CycleTime;
+        sTCycle := sTCycle + CycleTime;
+        QVel := 0.0;
+        // exactly the sensor of the expected hand, and not the other one
+        tVariantOk := (VariantLH AND SensLH AND NOT SensRH) OR (NOT VariantLH AND SensRH AND NOT SensLH);
+    {endregion}
+
+    {region "Faults"}
+        IF sState &lt;&gt; 9 AND (NOT SafetyOk OR NOT DriveOk) THEN
+            IF NOT SafetyOk THEN
+                FaultCode := 1;
+            ELSE
+                FaultCode := 2;
+            END_IF;
+            IF sState &lt;&gt; 10 THEN
+                sInTest := sState &gt;= 1 AND sState &lt;= 6;
+                sWasLocked := sState = 8;
+            END_IF;
+            sState := 9;
+        END_IF;
+    {endregion}
+
+    {region "Sequence"}
+        CASE sState OF
+            0:  // Idle
+                Locked := FALSE;
+                IF NOT PartPresent THEN
+                    sTim := 0.0;
+                    QLampOk := FALSE;
+                    QLampNok := FALSE;
+                ELSIF sTim &gt;= TPresent AND StartEnable AND ClampOpen AND NOT sRigCheckRequired THEN
+                    Verdict := 0;
+                    NokCode := 0;
+                    sPreNok := 0;
+                    sTCycle := 0.0;
+                    sTim := 0.0;
+                    IF tVariantOk THEN
+                        sState := 1;
+                    ELSE
+                        sPreNok := 20;   // never pull a part of the wrong hand
+                        sState := 6;
+                    END_IF;
+                END_IF;
+            1:  // Clamp
+                QClamp := TRUE;
+                IF ClampClosed THEN
+                    sTim := 0.0;
+                    sState := 2;
+                ELSIF sTim &gt; TClampMax THEN
+                    FaultCode := 3;
+                    sInTest := TRUE;
+                    sState := 9;
+                END_IF;
+            2:  // Tare
+                IF sTim &gt;= 0.05 THEN
+                    IF ABS(Force) &gt; TareTol THEN
+                        FaultCode := 4;
+                        sInTest := TRUE;
+                        sState := 9;
+                    ELSE
+                        sTare := Force;
+                        // the recipe of this part (Siemens: written into Eval by the caller)
+                        Eval.Mode := Rcp.Mode;
+                        Eval.GateX := Rcp.GateX;
+                        Eval.Gate2X := Rcp.Gate2X;
+                        Eval.PeakXLo := Rcp.PeakXLo;
+                        Eval.PeakXHi := Rcp.PeakXHi;
+                        Eval.StepSpan := Rcp.StepSpan;
+                        Eval.StopF := Rcp.StopF;
+                        Eval.G1Lo := Rcp.G1Lo;
+                        Eval.G1Hi := Rcp.G1Hi;
+                        Eval.MeanLo := Rcp.MeanLo;
+                        Eval.MeanHi := Rcp.MeanHi;
+                        Eval.HystLo := Rcp.HystLo;
+                        Eval.HystHi := Rcp.HystHi;
+                        Eval.RetFMin := Rcp.RetFMin;
+                        Eval.G2Lo := Rcp.G2Lo;
+                        Eval.G2Hi := Rcp.G2Hi;
+                        Eval.PeakFLo := Rcp.PeakFLo;
+                        Eval.PeakFHi := Rcp.PeakFHi;
+                        Eval.PeakXMin := Rcp.PeakXMin;
+                        Eval.PeakXMax := Rcp.PeakXMax;
+                        Eval.StepLo := Rcp.StepLo;
+                        Eval.StopXLo := Rcp.StopXLo;
+                        Eval.StopXHi := Rcp.StopXHi;
+                        Eval.EnvX0 := Rcp.EnvX0;
+                        Eval.EnvDx := Rcp.EnvDx;
+                        Eval.EnvN := Rcp.EnvN;
+                        Eval.EnvLo := Rcp.EnvLo;
+                        Eval.EnvHi := Rcp.EnvHi;
+                        Eval(Reset := TRUE, Sample := FALSE, Stroke := 0, X := 0.0, F := 0.0, Finish := FALSE);
+                        sState := 3;
+                    END_IF;
+                END_IF;
+            3:  // Approach
+                QVel := VPull;
+                IF FNet &gt; FTouch THEN
+                    sTouchPos := Pos;
+                    sFTouch := FNet;
+                    IF Pos &lt; TouchLo OR Pos &gt; TouchHi THEN
+                        sPreNok := 21;
+                        sState := 5;
+                    ELSE
+                        XTravel := 0.0;
+                        Eval(Reset := FALSE, Sample := TRUE, Stroke := 1, X := 0.0, F := FNet, Finish := FALSE);
+                        sState := 4;
+                    END_IF;
+                ELSIF Pos &gt; TouchHi THEN
+                    sPreNok := 21;
+                    sTouchPos := Pos;
+                    sFTouch := 0.0;
+                    sState := 5;
+                END_IF;
+            4:  // Pull
+                QVel := VPull;
+                XTravel := Pos - sTouchPos - (FNet - sFTouch) * Compliance;
+                Eval(Reset := FALSE, Sample := TRUE, Stroke := 1, X := XTravel, F := FNet, Finish := FALSE);
+                IF FNet &gt;= FAbsMax THEN
+                    sPreNok := 22;
+                    sState := 5;
+                ELSIF FNet &gt;= FRev THEN
+                    sState := 5;
+                ELSIF XTravel &gt;= XMax THEN
+                    sPreNok := 23;
+                    sState := 5;
+                END_IF;
+            5:  // Return
+                XTravel := Pos - sTouchPos - (FNet - sFTouch) * Compliance;
+                IF Pos &gt; sTouchPos - 0.5 THEN
+                    QVel := -VPull;
+                    IF sPreNok = 0 THEN
+                        Eval(Reset := FALSE, Sample := TRUE, Stroke := 2, X := XTravel, F := FNet, Finish := FALSE);
+                    END_IF;
+                ELSIF Pos &gt; 0.05 THEN
+                    QVel := -VHome;
+                ELSE
+                    sState := 6;
+                END_IF;
+            6:  // Evaluate
+                IF sPreNok &lt;&gt; 0 THEN
+                    tCode := sPreNok;
+                ELSE
+                    Eval(Reset := FALSE, Sample := FALSE, Stroke := 0, X := 0.0, F := 0.0, Finish := TRUE);
+                    tCode := Eval.NokCode;
+                END_IF;
+                NokCode := tCode;
+                TCycle := sTCycle;
+                sCntTotal := sCntTotal + 1;
+                sCntByCode[tCode] := sCntByCode[tCode] + 1;
+                QClamp := FALSE;
+                sTim := 0.0;
+                IF tCode = 0 THEN
+                    Verdict := 1;
+                    sCntOk := sCntOk + 1;
+                    sCntConsecNok := 0;
+                    QLampOk := TRUE;
+                    sState := 7;
+                ELSE
+                    Verdict := 2;
+                    sCntNok := sCntNok + 1;
+                    sCntConsecNok := sCntConsecNok + 1;
+                    QLampNok := TRUE;
+                    sPartGone := FALSE;
+                    sState := 8;
+                END_IF;
+            7:  // UnloadOk
+                QClamp := FALSE;
+                IF NOT PartPresent AND ClampOpen THEN
+                    sTim := 0.0;
+                    sState := 0;
+                END_IF;
+            8:  // RejectLock
+                QClamp := FALSE;
+                Locked := TRUE;
+                IF NOT PartPresent THEN
+                    sPartGone := TRUE;
+                END_IF;
+                QCallOperator := sTim &gt; TRejectWarn OR sRigCheckRequired;
+                IF sPartGone AND tChuteEdge THEN
+                    sCntRejectConfirmed := sCntRejectConfirmed + 1;
+                    sRigCheckRequired := sCntConsecNok &gt;= MaxConsecNok;
+                    QCallOperator := sRigCheckRequired;
+                    Locked := FALSE;
+                    sTim := 0.0;
+                    sState := 0;
+                END_IF;
+            9:  // Fault
+                QClamp := sInTest;
+                QCallOperator := TRUE;
+                IF AckFault AND SafetyOk AND DriveOk THEN
+                    FaultCode := 0;
+                    QCallOperator := FALSE;
+                    sState := 10;
+                END_IF;
+            10:  // Home
+                IF Pos &gt; 0.05 THEN
+                    QVel := -VPull;
+                ELSIF sInTest THEN
+                    sInTest := FALSE;
+                    sPreNok := 24;
+                    sState := 6;
+                ELSIF sWasLocked THEN
+                    sWasLocked := FALSE;   // a fault does not release the reject lock
+                    sState := 8;
+                ELSE
+                    sState := 0;
+                END_IF;
+            ELSE
+                sState := 9;
+        END_CASE;
+    {endregion}
+
+    {region "RigCheck"}
+        // the lock after too many rejects in a row is released by the acknowledge key
+        IF sRigCheckRequired AND AckFault AND sState = 0 THEN
+            sRigCheckRequired := FALSE;
+            sCntConsecNok := 0;
+            QCallOperator := FALSE;
+        END_IF;
+        QDriveEnable := SafetyOk AND DriveOk AND sState &lt;&gt; 9;
+    {endregion}
+
+    {region "Outputs"}
+        // state and counters live in static variables; these outputs are written here and nowhere else
+        State := sState;
+        RigCheckRequired := sRigCheckRequired;
+        CntTotal := sCntTotal;
+        CntOk := sCntOk;
+        CntNok := sCntNok;
+        CntRejectConfirmed := sCntRejectConfirmed;
+        CntConsecNok := sCntConsecNok;
+        CntByCode := sCntByCode;
+    {endregion}
+</xhtml>
+          </ST>
+        </body>
+        <addData />
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations />
+  </instances>
+</project>

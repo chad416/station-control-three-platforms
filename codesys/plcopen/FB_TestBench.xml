@@ -1,0 +1,671 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://www.plcopen.org/xml/tc6_0200">
+  <fileHeader companyName="" productName="CODESYS" productVersion="CODESYS V3.5 SP22 Patch 1" creationDateTime="2026-11-25T17:27:32.4369214" />
+  <contentHeader name="station_cds.project" modificationDateTime="2026-11-25T17:27:31.3827148">
+    <coordinateInfo>
+      <fbd>
+        <scaling x="1" y="1" />
+      </fbd>
+      <ld>
+        <scaling x="1" y="1" />
+      </ld>
+      <sfc>
+        <scaling x="1" y="1" />
+      </sfc>
+    </coordinateInfo>
+    <addData>
+      <data name="http://www.3s-software.com/plcopenxml/projectinformation" handleUnknown="implementation">
+        <ProjectInformation />
+      </data>
+    </addData>
+  </contentHeader>
+  <types>
+    <dataTypes />
+    <pous>
+      <pou name="FB_TestBench" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="ReplayPerCall">
+              <type>
+                <INT />
+              </type>
+              <initialValue>
+                <simpleValue value="200" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> samples replayed per call</xhtml>
+              </documentation>
+            </variable>
+            <variable name="ScansPerCall">
+              <type>
+                <INT />
+              </type>
+              <initialValue>
+                <simpleValue value="100" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> station scans (2 ms of station time each) per call</xhtml>
+              </documentation>
+            </variable>
+          </inputVars>
+          <localVars>
+            <variable name="Eval">
+              <type>
+                <derived name="FB_CurveEval" />
+              </type>
+            </variable>
+            <variable name="Station">
+              <type>
+                <derived name="FB_HandleStation" />
+              </type>
+            </variable>
+            <variable name="Plant">
+              <type>
+                <derived name="FB_TestPlant" />
+              </type>
+            </variable>
+            <variable name="StationRcp">
+              <type>
+                <derived name="ST_EvalRecipe" />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> recipe of the station (Siemens: written into Station.Eval)</xhtml>
+              </documentation>
+            </variable>
+            <variable name="sPhase">
+              <type>
+                <INT />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> 0 start, 1 replay, 2 station, 3 done</xhtml>
+              </documentation>
+            </variable>
+            <variable name="sSub">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="sCase">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="sIdx">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="sCk">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="sNok">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="sRecord">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="sRun">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="sPassed">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="sFailed">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="sFirstCase">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="sFirstCheck">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="sMaxErr">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="sCalls">
+              <type>
+                <DINT />
+              </type>
+            </variable>
+            <variable name="sMeas">
+              <type>
+                <array>
+                  <dimension lower="0" upper="8" />
+                  <baseType>
+                    <REAL />
+                  </baseType>
+                </array>
+              </type>
+            </variable>
+            <variable name="sStep">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="sTim">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="sPart">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="sLH">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="sRH">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="sChute">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="sAck">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="sPlantReset">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="sCurve">
+              <type>
+                <INT />
+              </type>
+            </variable>
+          </localVars>
+          <tempVars>
+            <variable name="tI">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="tJ">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="tB">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="tCurve">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="tMode">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="tA">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="tN">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="tStroke">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="tErr">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+          </tempVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml xmlns="http://www.w3.org/1999/xhtml">    {region "Start"}
+        IF sPhase = 0 THEN
+            FOR tI := 1 TO 32 DO
+                GVL_TestResult.CasePass[tI] := FALSE;
+                GVL_TestResult.CaseCheck[tI] := 0;
+                GVL_TestResult.CaseNok[tI] := 0;
+            END_FOR;
+            // the part of the recipe that is the same in every case, for both evaluation instances
+            Eval.GateX := GVL_TestData.GateX;
+            Eval.Gate2X := GVL_TestData.Gate2X;
+            Eval.PeakXLo := GVL_TestData.PeakXLo;
+            Eval.PeakXHi := GVL_TestData.PeakXHi;
+            Eval.StepSpan := GVL_TestData.StepSpan;
+            Eval.StopF := GVL_TestData.StopF;
+            Eval.EnvX0 := GVL_TestData.EnvX0;
+            Eval.EnvDx := GVL_TestData.EnvDx;
+            Eval.EnvN := GVL_TestData.EnvN;
+            StationRcp.GateX := GVL_TestData.GateX;
+            StationRcp.Gate2X := GVL_TestData.Gate2X;
+            StationRcp.PeakXLo := GVL_TestData.PeakXLo;
+            StationRcp.PeakXHi := GVL_TestData.PeakXHi;
+            StationRcp.StepSpan := GVL_TestData.StepSpan;
+            StationRcp.StopF := GVL_TestData.StopF;
+            StationRcp.EnvX0 := GVL_TestData.EnvX0;
+            StationRcp.EnvDx := GVL_TestData.EnvDx;
+            StationRcp.EnvN := GVL_TestData.EnvN;
+            FOR tI := 0 TO 63 DO
+                Eval.EnvLo[tI] := GVL_TestData.EnvLo[tI];
+                Eval.EnvHi[tI] := GVL_TestData.EnvHi[tI];
+                StationRcp.EnvLo[tI] := GVL_TestData.EnvLo[tI];
+                StationRcp.EnvHi[tI] := GVL_TestData.EnvHi[tI];
+            END_FOR;
+            // the station judges with windows + return stroke (mode 3: limits 32..47)
+            StationRcp.Mode := 3;
+            StationRcp.G1Lo := GVL_TestData.Lim[32];
+            StationRcp.G1Hi := GVL_TestData.Lim[33];
+            StationRcp.MeanLo := GVL_TestData.Lim[34];
+            StationRcp.MeanHi := GVL_TestData.Lim[35];
+            StationRcp.HystLo := GVL_TestData.Lim[36];
+            StationRcp.HystHi := GVL_TestData.Lim[37];
+            StationRcp.RetFMin := GVL_TestData.Lim[38];
+            StationRcp.G2Lo := GVL_TestData.Lim[39];
+            StationRcp.G2Hi := GVL_TestData.Lim[40];
+            StationRcp.PeakFLo := GVL_TestData.Lim[41];
+            StationRcp.PeakFHi := GVL_TestData.Lim[42];
+            StationRcp.PeakXMin := GVL_TestData.Lim[43];
+            StationRcp.PeakXMax := GVL_TestData.Lim[44];
+            StationRcp.StepLo := GVL_TestData.Lim[45];
+            StationRcp.StopXLo := GVL_TestData.Lim[46];
+            StationRcp.StopXHi := GVL_TestData.Lim[47];
+            sCase := 1;
+            sSub := 0;
+            sCk := 0;
+            sNok := 0;
+            sStep := 10;
+            sTim := 0;
+            sPhase := 1;
+        END_IF;
+        IF sPhase &lt; 3 THEN
+            sCalls := sCalls + 1;
+        END_IF;
+    {endregion}
+
+    {region "Replay"}
+        IF sPhase = 1 THEN
+            FOR tI := 1 TO ReplayPerCall DO
+                IF NOT sRecord THEN
+                    tCurve := GVL_TestData.CaseCurve[sCase];
+                    tMode := GVL_TestData.CaseMode[sCase];
+                    tA := GVL_TestData.CurveStart[tCurve];
+                    tN := GVL_TestData.CurveNPull[tCurve];
+                    CASE sSub OF
+                        0:  // limits of the mode of this case, clear the evaluation
+                            tB := (tMode - 1) * 16;
+                            Eval.Mode := tMode;
+                            Eval.G1Lo := GVL_TestData.Lim[tB];
+                            Eval.G1Hi := GVL_TestData.Lim[tB + 1];
+                            Eval.MeanLo := GVL_TestData.Lim[tB + 2];
+                            Eval.MeanHi := GVL_TestData.Lim[tB + 3];
+                            Eval.HystLo := GVL_TestData.Lim[tB + 4];
+                            Eval.HystHi := GVL_TestData.Lim[tB + 5];
+                            Eval.RetFMin := GVL_TestData.Lim[tB + 6];
+                            Eval.G2Lo := GVL_TestData.Lim[tB + 7];
+                            Eval.G2Hi := GVL_TestData.Lim[tB + 8];
+                            Eval.PeakFLo := GVL_TestData.Lim[tB + 9];
+                            Eval.PeakFHi := GVL_TestData.Lim[tB + 10];
+                            Eval.PeakXMin := GVL_TestData.Lim[tB + 11];
+                            Eval.PeakXMax := GVL_TestData.Lim[tB + 12];
+                            Eval.StepLo := GVL_TestData.Lim[tB + 13];
+                            Eval.StopXLo := GVL_TestData.Lim[tB + 14];
+                            Eval.StopXHi := GVL_TestData.Lim[tB + 15];
+                            Eval(Reset := TRUE, Sample := FALSE, Stroke := 0, X := 0.0, F := 0.0, Finish := FALSE);
+                            sIdx := 0;
+                            sSub := 1;
+                        1:  // one sample: the pull samples first, then the return samples
+                            IF sIdx &lt; tN THEN
+                                tStroke := 1;
+                            ELSE
+                                tStroke := 2;
+                            END_IF;
+                            Eval(Reset := FALSE, Sample := TRUE, Stroke := tStroke,
+                                  X := GVL_TestData.X[tA + sIdx], F := GVL_TestData.F[tA + sIdx], Finish := FALSE);
+                            sIdx := sIdx + 1;
+                            IF sIdx &gt;= 2 * tN THEN
+                                sSub := 2;
+                            END_IF;
+                        2:  // judge and compare with the expected values
+                            Eval(Reset := FALSE, Sample := FALSE, Stroke := 0, X := 0.0, F := 0.0, Finish := TRUE);
+                            sMeas[0] := Eval.FpG1;
+                            sMeas[1] := Eval.FrG1;
+                            sMeas[2] := Eval.FMean;
+                            sMeas[3] := Eval.FHyst;
+                            sMeas[4] := Eval.FpG2;
+                            sMeas[5] := Eval.FPeak;
+                            sMeas[6] := Eval.XPeak;
+                            sMeas[7] := Eval.FStep;
+                            sMeas[8] := Eval.XStop;
+                            IF Eval.Ok XOR GVL_TestData.ExpOk[sCase] THEN
+                                sCk := 1;
+                            ELSIF Eval.NokCode &lt;&gt; GVL_TestData.ExpNok[sCase] THEN
+                                sCk := 2;
+                            ELSIF Eval.EnvViol &lt;&gt; GVL_TestData.ExpEnvViol[sCase] THEN
+                                sCk := 12;
+                            ELSIF Eval.EnvNodes &lt;&gt; GVL_TestData.ExpEnvNodes[sCase] THEN
+                                sCk := 13;
+                            END_IF;
+                            FOR tJ := 0 TO 8 DO
+                                tB := (sCase - 1) * 9 + tJ;
+                                IF GVL_TestData.ExpFeatValid[tB] THEN
+                                    tErr := ABS(sMeas[tJ] - GVL_TestData.ExpFeat[tB]);
+                                    IF tErr &gt; sMaxErr THEN
+                                        sMaxErr := tErr;
+                                    END_IF;
+                                    IF tErr &gt; GVL_TestData.Tol AND sCk = 0 THEN
+                                        sCk := 3 + tJ;
+                                    END_IF;
+                                END_IF;
+                            END_FOR;
+                            sNok := Eval.NokCode;
+                            sSub := 0;
+                            sRecord := TRUE;
+                    END_CASE;
+                END_IF;
+            END_FOR;
+        END_IF;
+    {endregion}
+
+    {region "Station"}
+        IF sPhase = 2 THEN
+            FOR tI := 1 TO ScansPerCall DO
+                IF sPhase = 2 AND NOT sRecord THEN
+                    IF sTim &lt; 30000 THEN
+                        sTim := sTim + 1;
+                    END_IF;
+                    // what the operator and the line do, and what the station must have done by now
+                    CASE sStep OF
+                        10:  // good LH unit
+                            sPart := TRUE;
+                            sLH := TRUE;
+                            sRH := FALSE;
+                            sCurve := GVL_TestData.GoodCurve;
+                            sPlantReset := TRUE;
+                            sStep := 11;
+                            sTim := 0;
+                        11:
+                            IF Station.CntTotal &gt;= 1 OR sTim &gt; 4000 THEN
+                                IF sTim &gt; 4000 THEN
+                                    sCk := 29;
+                                ELSIF Station.Verdict &lt;&gt; 1 THEN
+                                    sCk := 21;
+                                ELSIF Station.NokCode &lt;&gt; 0 THEN
+                                    sCk := 22;
+                                ELSIF Station.CntOk &lt;&gt; 1 OR Station.CntNok &lt;&gt; 0 THEN
+                                    sCk := 24;
+                                ELSIF NOT Plant.Moved THEN
+                                    sCk := 25;
+                                END_IF;
+                                sNok := Station.NokCode;
+                                sRecord := TRUE;
+                                sPart := FALSE;
+                                sStep := 12;
+                                sTim := 0;
+                            END_IF;
+                        12:  // unit taken out
+                            IF Station.State = 0 OR sTim &gt; 4000 THEN
+                                sStep := 20;
+                                sTim := 0;
+                            END_IF;
+                        20:  // RH unit while LH units are built
+                            sPart := TRUE;
+                            sLH := FALSE;
+                            sRH := TRUE;
+                            sCurve := GVL_TestData.GoodCurve;
+                            sPlantReset := TRUE;
+                            sStep := 21;
+                            sTim := 0;
+                        21:
+                            IF Station.CntTotal &gt;= 2 OR sTim &gt; 4000 THEN
+                                IF sTim &gt; 4000 THEN
+                                    sCk := 29;
+                                ELSIF Station.Verdict &lt;&gt; 2 THEN
+                                    sCk := 21;
+                                ELSIF Station.NokCode &lt;&gt; 20 THEN
+                                    sCk := 22;
+                                ELSIF Station.State &lt;&gt; 8 THEN
+                                    sCk := 23;
+                                ELSIF Plant.Moved OR Plant.Pos &gt; 0.0 OR NOT Plant.ClampOpen THEN
+                                    sCk := 25;
+                                END_IF;
+                                sNok := Station.NokCode;
+                                sRecord := TRUE;
+                                sStep := 22;
+                                sTim := 0;
+                            END_IF;
+                        22:  // reject lock: a chute signal while the rejected unit is still in the fixture
+                            sChute := sTim &gt;= 5 AND sTim &lt; 10;
+                            IF sTim &gt;= 20 THEN
+                                IF Station.State &lt;&gt; 8 OR NOT Station.Locked THEN
+                                    sCk := 26;
+                                END_IF;
+                                sPart := FALSE;
+                                sStep := 23;
+                                sTim := 0;
+                            END_IF;
+                        23:  // the unit is taken out and a new good unit is put in without using the chute
+                            IF sTim = 20 THEN
+                                sPart := TRUE;
+                                sLH := TRUE;
+                                sRH := FALSE;
+                                sPlantReset := TRUE;
+                            END_IF;
+                            IF sTim &gt;= 400 THEN
+                                IF sCk = 0 AND (Station.State &lt;&gt; 8 OR Station.CntTotal &lt;&gt; 2 OR Plant.Moved) THEN
+                                    sCk := 26;
+                                END_IF;
+                                sPart := FALSE;
+                                sStep := 24;
+                                sTim := 0;
+                            END_IF;
+                        24:  // fixture empty, the chute sensor sees a part
+                            sChute := sTim &gt;= 20 AND sTim &lt; 25;
+                            IF sTim &gt;= 40 THEN
+                                IF sCk = 0 AND (Station.State &lt;&gt; 0 OR Station.Locked OR Station.CntRejectConfirmed &lt;&gt; 1) THEN
+                                    sCk := 27;
+                                END_IF;
+                                sNok := Station.NokCode;
+                                sRecord := TRUE;
+                                sStep := 30;
+                                sTim := 0;
+                            END_IF;
+                        30:  // LH unit with unhooked latch lever
+                            sPart := TRUE;
+                            sLH := TRUE;
+                            sRH := FALSE;
+                            sCurve := GVL_TestData.BadCurve;
+                            sPlantReset := TRUE;
+                            sStep := 31;
+                            sTim := 0;
+                        31:
+                            IF Station.CntTotal &gt;= 3 OR sTim &gt; 4000 THEN
+                                IF sTim &gt; 4000 THEN
+                                    sCk := 29;
+                                ELSIF Station.Verdict &lt;&gt; 2 THEN
+                                    sCk := 21;
+                                ELSIF Station.NokCode &lt;&gt; 5 THEN
+                                    sCk := 22;
+                                ELSIF Station.CntConsecNok &lt;&gt; 2 THEN
+                                    sCk := 24;
+                                ELSIF NOT Plant.Moved THEN
+                                    sCk := 25;
+                                END_IF;
+                                sNok := Station.NokCode;
+                                sRecord := TRUE;
+                                sPart := FALSE;
+                                sStep := 32;
+                                sTim := 0;
+                            END_IF;
+                        32:  // into the chute
+                            sChute := sTim &gt;= 20 AND sTim &lt; 25;
+                            IF (sTim &gt;= 40 AND Station.State = 0) OR sTim &gt; 4000 THEN
+                                sStep := 40;
+                                sTim := 0;
+                            END_IF;
+                        40:  // the same defect again: third reject in a row
+                            sPart := TRUE;
+                            sCurve := GVL_TestData.BadCurve;
+                            sPlantReset := TRUE;
+                            sStep := 41;
+                            sTim := 0;
+                        41:
+                            IF Station.CntTotal &gt;= 4 OR sTim &gt; 4000 THEN
+                                IF sTim &gt; 4000 THEN
+                                    sCk := 29;
+                                ELSIF Station.Verdict &lt;&gt; 2 THEN
+                                    sCk := 21;
+                                ELSIF Station.NokCode &lt;&gt; 5 THEN
+                                    sCk := 22;
+                                ELSIF Station.CntConsecNok &lt;&gt; 3 THEN
+                                    sCk := 24;
+                                END_IF;
+                                sNok := Station.NokCode;
+                                sPart := FALSE;
+                                sStep := 42;
+                                sTim := 0;
+                            END_IF;
+                        42:  // into the chute; then a good unit is put in
+                            sChute := sTim &gt;= 20 AND sTim &lt; 25;
+                            IF sTim &gt;= 40 THEN
+                                IF sCk = 0 AND Station.State &lt;&gt; 0 THEN
+                                    sCk := 27;
+                                ELSIF sCk = 0 AND (NOT Station.RigCheckRequired OR NOT Station.QCallOperator) THEN
+                                    sCk := 28;
+                                END_IF;
+                                sPart := TRUE;
+                                sCurve := GVL_TestData.GoodCurve;
+                                sPlantReset := TRUE;
+                                sStep := 43;
+                                sTim := 0;
+                            END_IF;
+                        43:  // the start must stay blocked until the acknowledge
+                            IF sTim &gt;= 400 THEN
+                                IF sCk = 0 AND (Station.State &lt;&gt; 0 OR Station.CntTotal &lt;&gt; 4 OR Plant.Moved) THEN
+                                    sCk := 28;
+                                END_IF;
+                                sRecord := TRUE;
+                                sStep := 50;
+                                sTim := 0;
+                            END_IF;
+                        50:  // acknowledge key; the good unit is then tested
+                            sAck := sTim &lt; 5;
+                            IF Station.CntTotal &gt;= 5 OR sTim &gt; 4000 THEN
+                                IF sTim &gt; 4000 THEN
+                                    sCk := 29;
+                                ELSIF Station.RigCheckRequired THEN
+                                    sCk := 28;
+                                ELSIF Station.Verdict &lt;&gt; 1 THEN
+                                    sCk := 21;
+                                ELSIF Station.NokCode &lt;&gt; 0 THEN
+                                    sCk := 22;
+                                ELSIF Station.CntOk &lt;&gt; 2 OR Station.CntConsecNok &lt;&gt; 0 THEN
+                                    sCk := 24;
+                                END_IF;
+                                sNok := Station.NokCode;
+                                sRecord := TRUE;
+                                sPart := FALSE;
+                                sAck := FALSE;
+                                sStep := 51;
+                                sTim := 0;
+                            END_IF;
+                        51:  // unit taken out
+                            IF Station.State = 0 OR sTim &gt; 4000 THEN
+                                sStep := 99;
+                            END_IF;
+                        ELSE
+                            sPhase := 3;
+                    END_CASE;
+                    Plant(Reset := sPlantReset, CycleTime := 0.002, QVel := Station.QVel,
+                           QDriveEnable := Station.QDriveEnable, QClamp := Station.QClamp,
+                           PartPresent := sPart, Curve := sCurve, Seat := 5.0);
+                    sPlantReset := FALSE;
+                    Station(Rcp := StationRcp, CycleTime := 0.002, SafetyOk := TRUE, DriveOk := TRUE, AckFault := sAck,
+                             StartEnable := TRUE, PartPresent := sPart, SensLH := sPart AND sLH,
+                             SensRH := sPart AND sRH, VariantLH := TRUE, ClampClosed := Plant.ClampClosed,
+                             ClampOpen := Plant.ClampOpen, RejectChute := sChute, Pos := Plant.Pos,
+                             Force := Plant.Force, Compliance := 0.0);
+                END_IF;
+            END_FOR;
+        END_IF;
+    {endregion}
+
+    {region "Record"}
+        IF sRecord THEN
+            sRun := sRun + 1;
+            IF sCk = 0 THEN
+                sPassed := sPassed + 1;
+                GVL_TestResult.CasePass[sCase] := TRUE;
+            ELSE
+                sFailed := sFailed + 1;
+                IF sFirstCase = 0 THEN
+                    sFirstCase := sCase;
+                    sFirstCheck := sCk;
+                END_IF;
+            END_IF;
+            GVL_TestResult.CaseCheck[sCase] := sCk;
+            GVL_TestResult.CaseNok[sCase] := sNok;
+            sCase := sCase + 1;
+            sCk := 0;
+            sNok := 0;
+            sRecord := FALSE;
+            IF sPhase = 1 AND sCase &gt; GVL_TestData.NCases THEN
+                sPhase := 2;
+            END_IF;
+        END_IF;
+    {endregion}
+
+    {region "Result"}
+        GVL_TestResult.CasesTotal := GVL_TestData.NCases + 6;
+        GVL_TestResult.CasesRun := sRun;
+        GVL_TestResult.CasesPassed := sPassed;
+        GVL_TestResult.CasesFailed := sFailed;
+        GVL_TestResult.FirstFailedCase := sFirstCase;
+        GVL_TestResult.FirstFailedCheck := sFirstCheck;
+        GVL_TestResult.MaxFeatError := sMaxErr;
+        GVL_TestResult.BenchCalls := sCalls;
+        GVL_TestResult.Done := sPhase = 3;
+        GVL_TestResult.AllPassed := sPhase = 3 AND sFailed = 0 AND sPassed = GVL_TestData.NCases + 6;
+    {endregion}
+</xhtml>
+          </ST>
+        </body>
+        <addData />
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations />
+  </instances>
+</project>

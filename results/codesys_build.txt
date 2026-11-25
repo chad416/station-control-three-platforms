@@ -1,0 +1,65 @@
+CODESYS V3.5 SP22 Patch 1, script engine, no user interface: ui_present=False
+date 2026-11-25 17:26
+device DeviceID(type=4096, Id='0000 0004', Version='3.5.22.10')
+library in template: Standard, * (System)
+library in template: #BreakpointLogging
+added ST_EvalRecipe (dut)
+added GVL_TestData (gvl)
+added GVL_TestResult (gvl)
+added FB_CurveEval (fb)
+added FB_HandleStation (fb)
+added FB_TestPlant (fb)
+added FB_TestBench (fb)
+added PLC_PRG (prg)
+task MainTask interval t#10ms
+--- build messages ---
+Build | Text | CNone |  | ------ Build started: Application: Station_PLC.Application -------
+Build | Text | CNone |  | Typify code...
+Build | Text | CNone |  | Compile complete -- 0 errors, 0 warnings
+Additional code checks | Text | SANone |  | Additional code checks ...
+Additional code checks | Text | SANone |  | Additional code checks complete -- 0 errors
+BUILD errors=0 warnings=0
+PLCopen XML exported to codesys/plcopen/
+simulation mode True
+logged in, state run
+Done=True after 1.4 s
+GVL_TestResult.Done = TRUE
+GVL_TestResult.AllPassed = TRUE
+GVL_TestResult.CasesTotal = INT#20
+GVL_TestResult.CasesRun = INT#20
+GVL_TestResult.CasesPassed = INT#20
+GVL_TestResult.CasesFailed = INT#0
+GVL_TestResult.FirstFailedCase = INT#0
+GVL_TestResult.FirstFailedCheck = INT#0
+GVL_TestResult.MaxFeatError = REAL#9.536743E-07
+GVL_TestResult.BenchCalls = DINT#102
+case  1 pass=TRUE check=INT#0 nok=INT#0
+case  2 pass=TRUE check=INT#0 nok=INT#0
+case  3 pass=TRUE check=INT#0 nok=INT#2
+case  4 pass=TRUE check=INT#0 nok=INT#2
+case  5 pass=TRUE check=INT#0 nok=INT#2
+case  6 pass=TRUE check=INT#0 nok=INT#3
+case  7 pass=TRUE check=INT#0 nok=INT#5
+case  8 pass=TRUE check=INT#0 nok=INT#2
+case  9 pass=TRUE check=INT#0 nok=INT#9
+case 10 pass=TRUE check=INT#0 nok=INT#2
+case 11 pass=TRUE check=INT#0 nok=INT#0
+case 12 pass=TRUE check=INT#0 nok=INT#0
+case 13 pass=TRUE check=INT#0 nok=INT#0
+case 14 pass=TRUE check=INT#0 nok=INT#0
+case 15 pass=TRUE check=INT#0 nok=INT#0
+case 16 pass=TRUE check=INT#0 nok=INT#20
+case 17 pass=TRUE check=INT#0 nok=INT#20
+case 18 pass=TRUE check=INT#0 nok=INT#5
+case 19 pass=TRUE check=INT#0 nok=INT#5
+case 20 pass=TRUE check=INT#0 nok=INT#0
+PLC_PRG.Bench.Station.State = INT#0
+PLC_PRG.Bench.Station.Verdict = INT#1
+PLC_PRG.Bench.Station.NokCode = INT#0
+PLC_PRG.Bench.Station.CntTotal = DINT#5
+PLC_PRG.Bench.Station.CntOk = DINT#2
+PLC_PRG.Bench.Station.CntNok = DINT#3
+PLC_PRG.Bench.Station.CntRejectConfirmed = DINT#3
+PLC_PRG.Bench.Station.RigCheckRequired = FALSE
+PLC_PRG.Bench.Station.Locked = FALSE
+logged out

@@ -1,0 +1,723 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://www.plcopen.org/xml/tc6_0200">
+  <fileHeader companyName="" productName="CODESYS" productVersion="CODESYS V3.5 SP22 Patch 1" creationDateTime="2026-11-25T17:27:32.1859428" />
+  <contentHeader name="station_cds.project" modificationDateTime="2026-11-25T17:27:31.3827148">
+    <coordinateInfo>
+      <fbd>
+        <scaling x="1" y="1" />
+      </fbd>
+      <ld>
+        <scaling x="1" y="1" />
+      </ld>
+      <sfc>
+        <scaling x="1" y="1" />
+      </sfc>
+    </coordinateInfo>
+    <addData>
+      <data name="http://www.3s-software.com/plcopenxml/projectinformation" handleUnknown="implementation">
+        <ProjectInformation />
+      </data>
+    </addData>
+  </contentHeader>
+  <types>
+    <dataTypes />
+    <pous>
+      <pou name="FB_CurveEval" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="Reset">
+              <type>
+                <BOOL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> clear all results, before a new pull</xhtml>
+              </documentation>
+            </variable>
+            <variable name="Sample">
+              <type>
+                <BOOL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> X and F are a new sample</xhtml>
+              </documentation>
+            </variable>
+            <variable name="Stroke">
+              <type>
+                <INT />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> 1 pull, 2 return</xhtml>
+              </documentation>
+            </variable>
+            <variable name="X">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> mm, travel from touch</xhtml>
+              </documentation>
+            </variable>
+            <variable name="F">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> N</xhtml>
+              </documentation>
+            </variable>
+            <variable name="Finish">
+              <type>
+                <BOOL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> return stroke finished: judge</xhtml>
+              </documentation>
+            </variable>
+            <variable name="Mode">
+              <type>
+                <INT />
+              </type>
+              <initialValue>
+                <simpleValue value="3" />
+              </initialValue>
+            </variable>
+            <variable name="GateX">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="3.0" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> mm</xhtml>
+              </documentation>
+            </variable>
+            <variable name="Gate2X">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="10.0" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> mm</xhtml>
+              </documentation>
+            </variable>
+            <variable name="PeakXLo">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="13.0" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> mm</xhtml>
+              </documentation>
+            </variable>
+            <variable name="PeakXHi">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="26.0" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> mm</xhtml>
+              </documentation>
+            </variable>
+            <variable name="StepSpan">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="2.0" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> mm</xhtml>
+              </documentation>
+            </variable>
+            <variable name="StopF">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="30.0" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> N</xhtml>
+              </documentation>
+            </variable>
+            <variable name="G1Lo">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> N, limits of FpG1 (mode 2)</xhtml>
+              </documentation>
+            </variable>
+            <variable name="G1Hi">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="MeanLo">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> N, limits of FMean (mode 3)</xhtml>
+              </documentation>
+            </variable>
+            <variable name="MeanHi">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="HystLo">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> N, limits of FHyst (mode 3)</xhtml>
+              </documentation>
+            </variable>
+            <variable name="HystHi">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="RetFMin">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> N, FrG1 must be above (mode 3)</xhtml>
+              </documentation>
+            </variable>
+            <variable name="G2Lo">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> N, limits of FpG2</xhtml>
+              </documentation>
+            </variable>
+            <variable name="G2Hi">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="PeakFLo">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> N</xhtml>
+              </documentation>
+            </variable>
+            <variable name="PeakFHi">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="PeakXMin">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> mm, limits of XPeak</xhtml>
+              </documentation>
+            </variable>
+            <variable name="PeakXMax">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="StepLo">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> N</xhtml>
+              </documentation>
+            </variable>
+            <variable name="StopXLo">
+              <type>
+                <REAL />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> mm</xhtml>
+              </documentation>
+            </variable>
+            <variable name="StopXHi">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="EnvX0">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="1.0" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> mm, first envelope node</xhtml>
+              </documentation>
+            </variable>
+            <variable name="EnvDx">
+              <type>
+                <REAL />
+              </type>
+              <initialValue>
+                <simpleValue value="0.5" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> mm, node spacing</xhtml>
+              </documentation>
+            </variable>
+            <variable name="EnvN">
+              <type>
+                <INT />
+              </type>
+              <initialValue>
+                <simpleValue value="55" />
+              </initialValue>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> number of nodes, at most 64</xhtml>
+              </documentation>
+            </variable>
+            <variable name="EnvLo">
+              <type>
+                <array>
+                  <dimension lower="0" upper="63" />
+                  <baseType>
+                    <REAL />
+                  </baseType>
+                </array>
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> N</xhtml>
+              </documentation>
+            </variable>
+            <variable name="EnvHi">
+              <type>
+                <array>
+                  <dimension lower="0" upper="63" />
+                  <baseType>
+                    <REAL />
+                  </baseType>
+                </array>
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> N</xhtml>
+              </documentation>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="FpG1">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="FrG1">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="FMean">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="FHyst">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="FpG2">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="FPeak">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="XPeak">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="FStep">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="XStop">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="EnvViol">
+              <type>
+                <INT />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> envelope nodes outside the band</xhtml>
+              </documentation>
+            </variable>
+            <variable name="EnvNodes">
+              <type>
+                <INT />
+              </type>
+              <documentation>
+                <xhtml xmlns="http://www.w3.org/1999/xhtml"> envelope nodes evaluated</xhtml>
+              </documentation>
+            </variable>
+            <variable name="NSamples">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="Done">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="Ok">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="NokCode">
+              <type>
+                <INT />
+              </type>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="sHavePrev">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="sPrevX">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="sPrevF">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="sPrevStroke">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="sGotG1">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="sGotG2">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="sGotR1">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="sGotPeak">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="sGotStop">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="sFMin">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="sFpG1">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="sFrG1">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="sFMean">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="sFHyst">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="sFpG2">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="sFPeak">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="sXPeak">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="sFStep">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="sXStop">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="sEnvViol">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="sEnvNodes">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="sNSamples">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="sDone">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="sOk">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="sNokCode">
+              <type>
+                <INT />
+              </type>
+            </variable>
+          </localVars>
+          <tempVars>
+            <variable name="tI">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="tNodeX">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="tFn">
+              <type>
+                <REAL />
+              </type>
+            </variable>
+            <variable name="tCode">
+              <type>
+                <INT />
+              </type>
+            </variable>
+          </tempVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml xmlns="http://www.w3.org/1999/xhtml">    {region "Reset"}
+        IF Reset THEN
+            sFpG1 := 0.0;
+            sFrG1 := 0.0;
+            sFMean := 0.0;
+            sFHyst := 0.0;
+            sFpG2 := 0.0;
+            sFPeak := 0.0;
+            sXPeak := 0.0;
+            sFStep := 0.0;
+            sXStop := 0.0;
+            sEnvViol := 0;
+            sEnvNodes := 0;
+            sNSamples := 0;
+            sDone := FALSE;
+            sOk := FALSE;
+            sNokCode := 0;
+            sHavePrev := FALSE;
+            sGotG1 := FALSE;
+            sGotG2 := FALSE;
+            sGotR1 := FALSE;
+            sGotPeak := FALSE;
+            sGotStop := FALSE;
+            sFMin := 0.0;
+        END_IF;
+    {endregion}
+
+    {region "PullStroke"}
+        IF NOT Reset AND Sample AND NOT sDone AND Stroke = 1 THEN
+            IF sHavePrev AND sPrevStroke = 1 THEN
+                // gates: force at a set travel, linear between the two samples around it
+                IF NOT sGotG1 AND sPrevX &lt; GateX AND X &gt;= GateX THEN
+                    sFpG1 := sPrevF + (F - sPrevF) * (GateX - sPrevX) / (X - sPrevX);
+                    sGotG1 := TRUE;
+                END_IF;
+                IF NOT sGotG2 AND sPrevX &lt; Gate2X AND X &gt;= Gate2X THEN
+                    sFpG2 := sPrevF + (F - sPrevF) * (Gate2X - sPrevX) / (X - sPrevX);
+                    sGotG2 := TRUE;
+                END_IF;
+                // end stop: travel at a set force
+                IF NOT sGotStop AND sPrevX &gt; Gate2X AND sPrevF &lt; StopF AND F &gt;= StopF THEN
+                    sXStop := sPrevX + (X - sPrevX) * (StopF - sPrevF) / (F - sPrevF);
+                    sGotStop := TRUE;
+                END_IF;
+                // envelope: at most four nodes can lie between two samples
+                FOR tI := 1 TO 4 DO
+                    tNodeX := EnvX0 + EnvDx * INT_TO_REAL(sEnvNodes);
+                    IF sEnvNodes &lt; EnvN AND sPrevX &lt; tNodeX AND X &gt;= tNodeX THEN
+                        tFn := sPrevF + (F - sPrevF) * (tNodeX - sPrevX) / (X - sPrevX);
+                        IF tFn &lt; EnvLo[sEnvNodes] OR tFn &gt; EnvHi[sEnvNodes] THEN
+                            sEnvViol := sEnvViol + 1;
+                        END_IF;
+                        sEnvNodes := sEnvNodes + 1;
+                    END_IF;
+                END_FOR;
+            END_IF;
+            // latch release: peak inside the window, then the drop after it
+            IF X &gt;= PeakXLo AND X &lt;= PeakXHi AND (NOT sGotPeak OR F &gt; sFPeak) THEN
+                sFPeak := F;
+                sXPeak := X;
+                sFMin := F;
+                sGotPeak := TRUE;
+            ELSIF sGotPeak AND X &lt;= sXPeak + StepSpan AND F &lt; sFMin THEN
+                sFMin := F;
+            END_IF;
+            IF sGotPeak THEN
+                sFStep := sFPeak - sFMin;
+            END_IF;
+        END_IF;
+    {endregion}
+
+    {region "ReturnStroke"}
+        IF NOT Reset AND Sample AND NOT sDone AND Stroke = 2 AND sHavePrev THEN
+            IF NOT sGotR1 AND sPrevX &gt; GateX AND X &lt;= GateX THEN
+                sFrG1 := sPrevF + (F - sPrevF) * (GateX - sPrevX) / (X - sPrevX);
+                sGotR1 := TRUE;
+            END_IF;
+        END_IF;
+    {endregion}
+
+    {region "Bookkeeping"}
+        IF NOT Reset AND Sample AND NOT sDone THEN
+            sPrevX := X;
+            sPrevF := F;
+            sPrevStroke := Stroke;
+            sHavePrev := TRUE;
+            IF sNSamples &lt; 32000 THEN
+                sNSamples := sNSamples + 1;
+            END_IF;
+        END_IF;
+    {endregion}
+
+    {region "Verdict"}
+        IF NOT Reset AND Finish AND NOT sDone THEN
+            sFMean := (sFpG1 + sFrG1) * 0.5;
+            sFHyst := sFpG1 - sFrG1;
+            tCode := 0;
+            CASE Mode OF
+                1:  // peak force only
+                    IF NOT sGotPeak THEN
+                        tCode := 1;
+                    ELSIF sFPeak &lt; PeakFLo OR sFPeak &gt; PeakFHi THEN
+                        tCode := 6;
+                    END_IF;
+                2, 3:  // windows; mode 3 judges gate 1 with the return stroke
+                    IF NOT (sGotG1 AND sGotG2 AND sGotPeak AND sGotStop) THEN
+                        tCode := 1;
+                    ELSIF Mode = 3 AND NOT sGotR1 THEN
+                        tCode := 1;
+                    ELSIF Mode = 2 AND (sFpG1 &lt; G1Lo OR sFpG1 &gt; G1Hi) THEN
+                        tCode := 2;
+                    ELSIF Mode = 3 AND (sFMean &lt; MeanLo OR sFMean &gt; MeanHi) THEN
+                        tCode := 2;
+                    ELSIF Mode = 3 AND (sFHyst &lt; HystLo OR sFHyst &gt; HystHi) THEN
+                        tCode := 3;
+                    ELSIF Mode = 3 AND sFrG1 &lt; RetFMin THEN
+                        tCode := 4;
+                    ELSIF sFpG2 &lt; G2Lo OR sFpG2 &gt; G2Hi THEN
+                        tCode := 5;
+                    ELSIF sFPeak &lt; PeakFLo OR sFPeak &gt; PeakFHi THEN
+                        tCode := 6;
+                    ELSIF sXPeak &lt; PeakXMin OR sXPeak &gt; PeakXMax THEN
+                        tCode := 7;
+                    ELSIF sFStep &lt; StepLo THEN
+                        tCode := 8;
+                    ELSIF sXStop &lt; StopXLo OR sXStop &gt; StopXHi THEN
+                        tCode := 9;
+                    END_IF;
+                4:  // envelope: every node reached and inside
+                    IF sEnvNodes &lt; EnvN THEN
+                        tCode := 1;
+                    ELSIF sEnvViol &gt; 0 THEN
+                        tCode := 10;
+                    END_IF;
+                ELSE
+                    tCode := 1;
+            END_CASE;
+            sNokCode := tCode;
+            sOk := tCode = 0;
+            sDone := TRUE;
+        END_IF;
+    {endregion}
+
+    {region "Outputs"}
+        // the working values live in static variables; the outputs are written here and nowhere else
+        FpG1 := sFpG1;
+        FrG1 := sFrG1;
+        FMean := sFMean;
+        FHyst := sFHyst;
+        FpG2 := sFpG2;
+        FPeak := sFPeak;
+        XPeak := sXPeak;
+        FStep := sFStep;
+        XStop := sXStop;
+        EnvViol := sEnvViol;
+        EnvNodes := sEnvNodes;
+        NSamples := sNSamples;
+        Done := sDone;
+        Ok := sOk;
+        NokCode := sNokCode;
+    {endregion}
+</xhtml>
+          </ST>
+        </body>
+        <addData />
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations />
+  </instances>
+</project>

@@ -1,0 +1,24 @@
+// Result of the test bench (FB_TestBench). Monitor this block in PLCSIM: docs/PLCSIM_RUN.md.
+DATA_BLOCK "DB_TestResult"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+NON_RETAIN
+   VAR
+      Done : Bool;   // the bench has finished; the values below no longer change
+      AllPassed : Bool;   // Done and every case passed
+      CasesTotal : Int;
+      CasesRun : Int;
+      CasesPassed : Int;
+      CasesFailed : Int;
+      FirstFailedCase : Int;   // 0 = none
+      FirstFailedCheck : Int;   // 0 = none; codes in the header of FB_TestBench
+      MaxFeatError : Real;   // N or mm, largest difference of an element from its expected value
+      BenchCalls : DInt;   // OB1 cycles the bench needed
+      CasePass : Array[1..32] of Bool;
+      CaseCheck : Array[1..32] of Int;   // failed check of each case, 0 = passed
+      CaseNok : Array[1..32] of Int;   // NOK code the block gave in each case
+   END_VAR
+
+BEGIN
+
+END_DATA_BLOCK

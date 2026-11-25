@@ -1,0 +1,351 @@
+FUNCTION_BLOCK FB_HandleStation
+//  CODESYS V3.5 port of the Siemens SCL block (siemens/scl/FB_HandleStation.scl). Changes, all forced
+//  by the compiler: the timer variable sT is sTim (ST is a keyword, identifiers are not case-sensitive);
+//  the evaluation recipe comes in by reference (Rcp) and is copied into Eval at the tare, because the
+//  caller may not write into Eval from outside (C0037).
+//  Called in the same cyclic interrupt as the sampling (CycleTime).
+//  States (DOSSIER section 3):
+//    0 Idle         wait for a part; check presence time and the LH/RH sensor pattern
+//    1 Clamp        close the clamp
+//    2 Tare         zero the load cell with the hook free
+//    3 Approach     drive towards the grip until the force passes FTouch; the touch position
+//                   must lie in its window
+//    4 Pull         sample every cycle into the curve evaluation; reverse at FRev
+//    5 Return       sample the return stroke down to travel 0, then go home fast
+//    6 Evaluate     judge
+//    7 UnloadOk     open the clamp; wait until the part has left
+//    8 RejectLock   open the clamp; the station stays locked until the part has left AND the
+//                   reject-chute sensor has seen a part pass
+//    9 Fault        drive stopped; after the acknowledge the axis goes home and the part that was
+//                   in test is treated as rejected (an interrupted test is not a passed test)
+//   10 Home         go home after a fault
+//  NokCode: 1 to 10 from FB_CurveEval; 20 wrong hand or sensor pattern not plausible;
+//           21 no touch or touch outside its window; 22 force above FAbsMax; 23 no end stop;
+//           24 test interrupted by a fault.
+//  FaultCode: 1 safety circuit open, 2 drive not ready, 3 clamp time-out, 4 load cell does not tare.
+   VAR_INPUT
+      CycleTime : Real := 0.002;   // s
+      SafetyOk : Bool;
+      DriveOk : Bool;
+      AckFault : Bool;
+      StartEnable : Bool;   // release from the line
+      PartPresent : Bool;
+      SensLH : Bool;   // variant sensor that only an LH unit covers
+      SensRH : Bool;   // variant sensor that only an RH unit covers
+      VariantLH : Bool;   // recipe: TRUE = LH units are being built
+      ClampClosed : Bool;
+      ClampOpen : Bool;
+      RejectChute : Bool;   // light barrier in the reject chute
+      Pos : Real;   // mm, axis position, 0 = home
+      Force : Real;   // N, load cell
+      VPull : Real := 50.0;   // mm/s
+      VHome : Real := 150.0;   // mm/s
+      FTouch : Real := 1.5;   // N
+      FRev : Real := 40.0;   // N
+      FAbsMax : Real := 60.0;   // N, protects the painted part
+      XMax : Real := 38.0;   // mm
+      TouchLo : Real := 3.0;   // mm, window of the touch position
+      TouchHi : Real := 7.0;
+      Compliance : Real := 0.025;   // mm/N, rig deflection taken out of the travel
+      TareTol : Real := 0.5;   // N
+      TPresent : Real := 0.1;   // s
+      TClampMax : Real := 1.0;   // s
+      TRejectWarn : Real := 30.0;   // s
+      MaxConsecNok : Int := 3;
+   END_VAR
+
+   VAR_IN_OUT
+      Rcp : ST_EvalRecipe;   // evaluation recipe, copied into Eval at every tare
+   END_VAR
+
+   VAR_OUTPUT
+      QClamp : Bool;
+      QDriveEnable : Bool;
+      QVel : Real;   // mm/s, positive = pull
+      QLampOk : Bool;
+      QLampNok : Bool;
+      QCallOperator : Bool;
+      State : Int;
+      Verdict : Int;   // 0 none, 1 OK, 2 NOK
+      NokCode : Int;
+      FaultCode : Int;
+      Locked : Bool;
+      RigCheckRequired : Bool;   // too many rejects in a row: run the master part
+      XTravel : Real;   // mm
+      FNet : Real;   // N
+      TCycle : Real;   // s, clamp to verdict of the last part
+      CntTotal : DInt;
+      CntOk : DInt;
+      CntNok : DInt;
+      CntRejectConfirmed : DInt;
+      CntConsecNok : Int;
+      CntByCode : Array[0..31] of DInt;
+   END_VAR
+
+   VAR
+      Eval : FB_CurveEval;
+      sTim : Real;
+      sTCycle : Real;
+      sTare : Real;
+      sTouchPos : Real;
+      sFTouch : Real;
+      sPreNok : Int;
+      sPartGone : Bool;
+      sChutePrev : Bool;
+      sInTest : Bool;
+      sWasLocked : Bool;
+      sState : Int;
+      sRigCheckRequired : Bool;
+      sCntTotal : DInt;
+      sCntOk : DInt;
+      sCntNok : DInt;
+      sCntRejectConfirmed : DInt;
+      sCntConsecNok : Int;
+      sCntByCode : Array[0..31] of DInt;
+   END_VAR
+
+   VAR_TEMP
+      tVariantOk : Bool;
+      tChuteEdge : Bool;
+      tCode : Int;
+   END_VAR
+
+(* @IMPLEMENTATION *)
+    {region "Inputs"}
+        FNet := Force - sTare;
+        tChuteEdge := RejectChute AND NOT sChutePrev;
+        sChutePrev := RejectChute;
+        sTim := sTim + CycleTime;
+        sTCycle := sTCycle + CycleTime;
+        QVel := 0.0;
+        // exactly the sensor of the expected hand, and not the other one
+        tVariantOk := (VariantLH AND SensLH AND NOT SensRH) OR (NOT VariantLH AND SensRH AND NOT SensLH);
+    {endregion}
+
+    {region "Faults"}
+        IF sState <> 9 AND (NOT SafetyOk OR NOT DriveOk) THEN
+            IF NOT SafetyOk THEN
+                FaultCode := 1;
+            ELSE
+                FaultCode := 2;
+            END_IF;
+            IF sState <> 10 THEN
+                sInTest := sState >= 1 AND sState <= 6;
+                sWasLocked := sState = 8;
+            END_IF;
+            sState := 9;
+        END_IF;
+    {endregion}
+
+    {region "Sequence"}
+        CASE sState OF
+            0:  // Idle
+                Locked := FALSE;
+                IF NOT PartPresent THEN
+                    sTim := 0.0;
+                    QLampOk := FALSE;
+                    QLampNok := FALSE;
+                ELSIF sTim >= TPresent AND StartEnable AND ClampOpen AND NOT sRigCheckRequired THEN
+                    Verdict := 0;
+                    NokCode := 0;
+                    sPreNok := 0;
+                    sTCycle := 0.0;
+                    sTim := 0.0;
+                    IF tVariantOk THEN
+                        sState := 1;
+                    ELSE
+                        sPreNok := 20;   // never pull a part of the wrong hand
+                        sState := 6;
+                    END_IF;
+                END_IF;
+            1:  // Clamp
+                QClamp := TRUE;
+                IF ClampClosed THEN
+                    sTim := 0.0;
+                    sState := 2;
+                ELSIF sTim > TClampMax THEN
+                    FaultCode := 3;
+                    sInTest := TRUE;
+                    sState := 9;
+                END_IF;
+            2:  // Tare
+                IF sTim >= 0.05 THEN
+                    IF ABS(Force) > TareTol THEN
+                        FaultCode := 4;
+                        sInTest := TRUE;
+                        sState := 9;
+                    ELSE
+                        sTare := Force;
+                        // the recipe of this part (Siemens: written into Eval by the caller)
+                        Eval.Mode := Rcp.Mode;
+                        Eval.GateX := Rcp.GateX;
+                        Eval.Gate2X := Rcp.Gate2X;
+                        Eval.PeakXLo := Rcp.PeakXLo;
+                        Eval.PeakXHi := Rcp.PeakXHi;
+                        Eval.StepSpan := Rcp.StepSpan;
+                        Eval.StopF := Rcp.StopF;
+                        Eval.G1Lo := Rcp.G1Lo;
+                        Eval.G1Hi := Rcp.G1Hi;
+                        Eval.MeanLo := Rcp.MeanLo;
+                        Eval.MeanHi := Rcp.MeanHi;
+                        Eval.HystLo := Rcp.HystLo;
+                        Eval.HystHi := Rcp.HystHi;
+                        Eval.RetFMin := Rcp.RetFMin;
+                        Eval.G2Lo := Rcp.G2Lo;
+                        Eval.G2Hi := Rcp.G2Hi;
+                        Eval.PeakFLo := Rcp.PeakFLo;
+                        Eval.PeakFHi := Rcp.PeakFHi;
+                        Eval.PeakXMin := Rcp.PeakXMin;
+                        Eval.PeakXMax := Rcp.PeakXMax;
+                        Eval.StepLo := Rcp.StepLo;
+                        Eval.StopXLo := Rcp.StopXLo;
+                        Eval.StopXHi := Rcp.StopXHi;
+                        Eval.EnvX0 := Rcp.EnvX0;
+                        Eval.EnvDx := Rcp.EnvDx;
+                        Eval.EnvN := Rcp.EnvN;
+                        Eval.EnvLo := Rcp.EnvLo;
+                        Eval.EnvHi := Rcp.EnvHi;
+                        Eval(Reset := TRUE, Sample := FALSE, Stroke := 0, X := 0.0, F := 0.0, Finish := FALSE);
+                        sState := 3;
+                    END_IF;
+                END_IF;
+            3:  // Approach
+                QVel := VPull;
+                IF FNet > FTouch THEN
+                    sTouchPos := Pos;
+                    sFTouch := FNet;
+                    IF Pos < TouchLo OR Pos > TouchHi THEN
+                        sPreNok := 21;
+                        sState := 5;
+                    ELSE
+                        XTravel := 0.0;
+                        Eval(Reset := FALSE, Sample := TRUE, Stroke := 1, X := 0.0, F := FNet, Finish := FALSE);
+                        sState := 4;
+                    END_IF;
+                ELSIF Pos > TouchHi THEN
+                    sPreNok := 21;
+                    sTouchPos := Pos;
+                    sFTouch := 0.0;
+                    sState := 5;
+                END_IF;
+            4:  // Pull
+                QVel := VPull;
+                XTravel := Pos - sTouchPos - (FNet - sFTouch) * Compliance;
+                Eval(Reset := FALSE, Sample := TRUE, Stroke := 1, X := XTravel, F := FNet, Finish := FALSE);
+                IF FNet >= FAbsMax THEN
+                    sPreNok := 22;
+                    sState := 5;
+                ELSIF FNet >= FRev THEN
+                    sState := 5;
+                ELSIF XTravel >= XMax THEN
+                    sPreNok := 23;
+                    sState := 5;
+                END_IF;
+            5:  // Return
+                XTravel := Pos - sTouchPos - (FNet - sFTouch) * Compliance;
+                IF Pos > sTouchPos - 0.5 THEN
+                    QVel := -VPull;
+                    IF sPreNok = 0 THEN
+                        Eval(Reset := FALSE, Sample := TRUE, Stroke := 2, X := XTravel, F := FNet, Finish := FALSE);
+                    END_IF;
+                ELSIF Pos > 0.05 THEN
+                    QVel := -VHome;
+                ELSE
+                    sState := 6;
+                END_IF;
+            6:  // Evaluate
+                IF sPreNok <> 0 THEN
+                    tCode := sPreNok;
+                ELSE
+                    Eval(Reset := FALSE, Sample := FALSE, Stroke := 0, X := 0.0, F := 0.0, Finish := TRUE);
+                    tCode := Eval.NokCode;
+                END_IF;
+                NokCode := tCode;
+                TCycle := sTCycle;
+                sCntTotal := sCntTotal + 1;
+                sCntByCode[tCode] := sCntByCode[tCode] + 1;
+                QClamp := FALSE;
+                sTim := 0.0;
+                IF tCode = 0 THEN
+                    Verdict := 1;
+                    sCntOk := sCntOk + 1;
+                    sCntConsecNok := 0;
+                    QLampOk := TRUE;
+                    sState := 7;
+                ELSE
+                    Verdict := 2;
+                    sCntNok := sCntNok + 1;
+                    sCntConsecNok := sCntConsecNok + 1;
+                    QLampNok := TRUE;
+                    sPartGone := FALSE;
+                    sState := 8;
+                END_IF;
+            7:  // UnloadOk
+                QClamp := FALSE;
+                IF NOT PartPresent AND ClampOpen THEN
+                    sTim := 0.0;
+                    sState := 0;
+                END_IF;
+            8:  // RejectLock
+                QClamp := FALSE;
+                Locked := TRUE;
+                IF NOT PartPresent THEN
+                    sPartGone := TRUE;
+                END_IF;
+                QCallOperator := sTim > TRejectWarn OR sRigCheckRequired;
+                IF sPartGone AND tChuteEdge THEN
+                    sCntRejectConfirmed := sCntRejectConfirmed + 1;
+                    sRigCheckRequired := sCntConsecNok >= MaxConsecNok;
+                    QCallOperator := sRigCheckRequired;
+                    Locked := FALSE;
+                    sTim := 0.0;
+                    sState := 0;
+                END_IF;
+            9:  // Fault
+                QClamp := sInTest;
+                QCallOperator := TRUE;
+                IF AckFault AND SafetyOk AND DriveOk THEN
+                    FaultCode := 0;
+                    QCallOperator := FALSE;
+                    sState := 10;
+                END_IF;
+            10:  // Home
+                IF Pos > 0.05 THEN
+                    QVel := -VPull;
+                ELSIF sInTest THEN
+                    sInTest := FALSE;
+                    sPreNok := 24;
+                    sState := 6;
+                ELSIF sWasLocked THEN
+                    sWasLocked := FALSE;   // a fault does not release the reject lock
+                    sState := 8;
+                ELSE
+                    sState := 0;
+                END_IF;
+            ELSE
+                sState := 9;
+        END_CASE;
+    {endregion}
+
+    {region "RigCheck"}
+        // the lock after too many rejects in a row is released by the acknowledge key
+        IF sRigCheckRequired AND AckFault AND sState = 0 THEN
+            sRigCheckRequired := FALSE;
+            sCntConsecNok := 0;
+            QCallOperator := FALSE;
+        END_IF;
+        QDriveEnable := SafetyOk AND DriveOk AND sState <> 9;
+    {endregion}
+
+    {region "Outputs"}
+        // state and counters live in static variables; these outputs are written here and nowhere else
+        State := sState;
+        RigCheckRequired := sRigCheckRequired;
+        CntTotal := sCntTotal;
+        CntOk := sCntOk;
+        CntNok := sCntNok;
+        CntRejectConfirmed := sCntRejectConfirmed;
+        CntConsecNok := sCntConsecNok;
+        CntByCode := sCntByCode;
+    {endregion}
+END_FUNCTION_BLOCK
