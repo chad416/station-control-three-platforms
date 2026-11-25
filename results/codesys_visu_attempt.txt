@@ -1,0 +1,25 @@
+import_native VisuManager.export: ok
+import_native StationVisu.export: ok
+object in application: ST_EvalRecipe
+object in application: Taskkonfiguration
+object in application: Library Manager
+object in application: GVL_TestData
+object in application: GVL_TestResult
+object in application: FB_CurveEval
+object in application: FB_HandleStation
+object in application: FB_TestPlant
+object in application: FB_TestBench
+object in application: PLC_PRG
+object in application: Visualization Manager
+object in application: __VisualizationStyle
+object in application: StationVisu
+Text | CNone | ------ Build started: Application: Station_PLC.Sim.Station_PLC.Application -------
+Text | CNone | Typify code...
+Text | CNone | Compile complete -- 0 errors, 0 warnings
+Text | SANone | Additional code checks ...
+Text | SANone | Additional code checks complete -- 0 errors
+BUILD errors=0 warnings=0
+simulation: logged in, run
+GVL_TestResult.AllPassed = TRUE
+GET http://localhost:8080/webvisu.htm failed: Unable to connect to the remote server
+logged out
