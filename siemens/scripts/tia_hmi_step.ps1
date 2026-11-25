@@ -94,6 +94,10 @@ public static class HmiStep {
                             hmi.ScreenFolder.Screens.Import(new FileInfo(f), ImportOptions.Override);
                             Log("  imported " + Path.GetFileName(f));
                         }
+                        if (name != "") {   // start screen in the same session
+                            hmi.SetAttribute("StartScreen", hmi.ScreenFolder.Screens.Find(name));
+                            Log("  start screen " + name);
+                        }
                     } else if (kind == "start") {
                         hmi.SetAttribute("StartScreen", hmi.ScreenFolder.Screens.Find(name));
                     }

@@ -74,6 +74,11 @@ What has to change, and what must stay identical, when the control and the opera
 - **Not done:**
   - **No PLC connection.** The driver string was the first wrong value: `SIMATIC S7 1500` is refused (`The value 'SIMATIC S7 1500' for the attribute 'Driver' is not supported`). `S7_1500_OMS` and `S7_1500`, the PLC ids in the installed communication channel files, were no longer reported. But every `InterfaceType` tried was refused (`Ethernet`, none, `PROFINET (X1)`, a dummy): `The value 'Ethernet' of attribute 'InterfaceType' is incompatible with other attributes`. So the tags are HMI-internal and show nothing from the PLC.
   - **The panel compile ends `COMPILE HMI Error errors=40 warnings=0`:** 23 times `The format pattern specified for '...' is invalid`, all on Real fields (pattern `s99999.999`); 16 times `The parameter of a function is not available for trigger Nav..., event 'Click'. This parameter must be assigned a valid value` (the `ActivateScreen` parameter); once `No start screen defined`. The start screen was not set, because the time box ended.
+- **Last round (45 minutes, installed TIA help only; same record):**
+  - Navigation: the installed WinCC help gives `ActivateScreen (Screen name, Object number)`, so the second parameter was missing. A constant parameter value needs a `Type` attribute on `Value` (`Missing XML attribute 'Type'`), but `Int32` and `xs:int` were refused (`The 'Value' attribute has an invalid type`). Not solved.
+  - Real format pattern: the help's own example form (`s9999.9999`) was in the test screen that could not be imported, so no Real pattern was confirmed. Not solved.
+  - Start screen: `'StartScreen' is not supported by type 'Siemens.Engineering.Hmi.HmiTarget'`; the start screen is not a target attribute in Openness V18 for this panel. Not solved.
+  - The panel compile is therefore still `COMPILE HMI Error errors=40 warnings=0`.
 - There is no picture of a WinCC screen. The WinCC runtime simulator was not started.
 
 

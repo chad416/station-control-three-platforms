@@ -8,6 +8,14 @@ Variants of siemens/hmi/xml/connection.xml that were tried (not kept in the repo
   conn_S7_1500.xml      Driver S7_1500, InterfaceType Ethernet (refused: Ethernet incompatible)
   tags_int2.xml         = siemens/hmi/xml/tags_Station_internal.xml (HMI-internal tags, no DataType link)
 The four screens were imported in one session (file names separated by ';'); the header shows the last.
+Last round (19:04 on):
+  screen_PatternTest.xml  a test screen: seven Real output fields with candidate patterns and a button with
+                          ActivateScreen(Screen name, Object number). Refused three times on the constant
+                          "Object number" = 0: no Type attribute, Type="Int32", Type="xs:int". One run could not
+                          open the project (left locked by the session before it, 2-minute delay).
+  *_nonav.xml + Station   the four screens without navigation buttons, Real fields with pattern s999999, then the
+                          start screen: screens imported, but 'StartScreen' is not supported by type HmiTarget,
+                          so nothing of that session was saved. The project is as after the 18:53 session.
 
 ﻿---- 2026-11-25 18:29  step connection conn_S7_1500_OMS.xml
 IMPORT FAIL connection conn_S7_1500_OMS.xml: Error when calling method 'Import' of type 'Siemens.Engineering.Hmi.Communication.ConnectionComposition'.  Cannot create the 'Hmi.Communication.Connection' object with Simatic ML ID '0' at line number 5 at line position 4.  Error when calling method 'Create' of type 'Siemens.Engineering.Hmi.Communication.ConnectionComposition'.  The value 'Ethernet' of attribute 'InterfaceType' is incompatible with other attributes. The value 'Ethernet' of attribute 'InterfaceType' is incompatible with other attributes.
@@ -203,4 +211,23 @@ COMPILE PLC Success  errors=0  warnings=0
     Information  Program blocks  
       Information    No block was compiled. All blocks are up-to-date.
   Success    Compiling finished (errors: 0; warnings: 0)
+
+---- 2026-11-25 19:04  step screen screen_PatternTest.xml
+IMPORT FAIL screen screen_PatternTest.xml: Error when calling method 'Import' of type 'Siemens.Engineering.Hmi.Screen.ScreenComposition'.  Missing XML attribute 'Type' for 'Value' attribute at the 'Siemens.Engineering.Hmi.Event.FunctionListEntryParameter' element with Simatic ML ID '2E' at line number 5 at line position 9622.
+
+---- 2026-11-25 19:06  step screen screen_PatternTest.xml
+STOPPED: Error when calling method 'Open' of type 'Siemens.Engineering.ProjectComposition'.  Unable to open the project under path 'C:\TIA_build\station39_hmi\station39_hmi.ap18'.  An error occurred while opening the project The project/library C:\TIA_build\station39_hmi\station39_hmi.ap18 cannot be accessed. It has already been opened by user chand on computer CHANDERTHEBEAST. Note: If the application was not correctly closed, the open projects and libraries can only be opened again after a 2 minute delay.
+
+---- 2026-11-25 19:09  step screen screen_PatternTest.xml
+IMPORT FAIL screen screen_PatternTest.xml: Error when calling method 'Import' of type 'Siemens.Engineering.Hmi.Screen.ScreenComposition'.  The 'Value' attribute has an invalid type 'Int32' at the 'Hmi.Event.FunctionListEntryParameter' object with Simatic ML ID '2E' at line number 5 and line position 9506.
+
+---- 2026-11-25 19:13  step screen screen_PatternTest.xml
+IMPORT FAIL screen screen_PatternTest.xml: Error when calling method 'Import' of type 'Siemens.Engineering.Hmi.Screen.ScreenComposition'.  The 'Value' attribute has an invalid type 'xs:int' at the 'Hmi.Event.FunctionListEntryParameter' object with Simatic ML ID '2E' at line number 5 and line position 9506.
+
+---- 2026-11-25 19:17  step screen screen_Setup_nonav.xmlStation
+  imported screen_Station_nonav.xml
+  imported screen_Measurement_nonav.xml
+  imported screen_Alarms_nonav.xml
+  imported screen_Setup_nonav.xml
+IMPORT FAIL screen screen_Setup_nonav.xmlStation: 'StartScreen' is not supported by type 'Siemens.Engineering.Hmi.HmiTarget'.
 
