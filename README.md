@@ -54,6 +54,8 @@ What has to change, and what must stay identical, when the control of one statio
 | HMI tag addressing | not built | not built | not verified |
 | Scan and task model | bench in OB1, 102 calls | bench in the cyclic MainTask, 102 calls | executed here; earlier record for OB1 |
 
+The short systems-engineering dossier (need, proof concept, requirements, architecture, verification, limits) is [DOSSIER.md](DOSSIER.md).
+
 ## How it was run
 
 ```
@@ -85,6 +87,7 @@ python -m pytest -q
 | `tools/testdata.py` | Test data from the Siemens data block to the CODESYS list and `results/testdata.json` |
 | `tools/scl37.py` | SCL translator (float32), copied from the door-handle project |
 | `results/` | Build records of the three CODESYS attempts, bench result |
+| `DOSSIER.md` | Short dossier |
 | `tests/` | CI: Siemens bench in the translator, generated test data, CODESYS run record |
 
 MIT licence.
