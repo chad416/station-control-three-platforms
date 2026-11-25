@@ -1,93 +1,117 @@
 # station-control-three-platforms
 
-One test station, its control blocks moved from Siemens SCL to CODESYS V3 Structured Text: what the port forced, what stayed identical, and the same 20 self-checking test cases as the proof.
+> **Status: no operator screen is finished.** CODESYS: a visualization bound to station variables compiles, but its layout is the CODESYS sample's. Siemens: the panel device exists, but its connection, tags and screens could not be imported. Allen-Bradley: specification only. Control code and the 20-case proof cover the three platforms as far as the table below says.
+
+One test station, its control blocks moved from Siemens SCL to CODESYS V3 Structured Text and to Allen-Bradley Logix Add-On Instructions: what the port forced, what stayed identical, and the same 20 self-checking test cases as the proof.
 
 > **Simulation-only study, no hardware.** The station is the end-of-line force-travel test of a car door-handle unit from [door-handle-force-travel-test](https://github.com/chad416/door-handle-force-travel-test). Its SCL blocks and test bench are copied here unchanged (`siemens/scl/`).
 >
-> **What was run here:** the CODESYS V3.5 SP22 Patch 1 port was built by script without a window (0 errors, 0 warnings) and its test bench ran in CODESYS simulation mode: 20 of 20 cases passed (`results/codesys_build.txt`, `results/codesys_bench.json`). The Siemens sources ran through the float32 SCL translator of the earlier project: 20 of 20 (CI).
+> **How far each platform got:**
 >
-> **What was not verified:** CODESYS is the platform EcoStruxure Machine Expert is built on. The code was **not** opened in Machine Expert, and no Modicon controller or Harmony panel was used. The Siemens blocks were not recompiled in this repo; their TIA Portal V18 compile (0 errors, 0 warnings) and their S7-PLCSIM Advanced run (20 of 20) are records of the earlier project. **No operator screen was built on any platform** (no CODESYS visualization, no WinCC panel, no PanelView). **The Allen-Bradley port is written but not compiled** ([logix/README.md](logix/README.md)): no Rockwell software is installed; it passes a structural check and runs the 20 cases 20 of 20 in a subset interpreter written in this repo. See [What was not done](#what-was-not-done).
+> | Platform | Control code | Bench, 20 cases | Operator screen |
+> |---|---|---|---|
+> | Schneider side: CODESYS V3.5 SP22 Patch 1 (the base of EcoStruxure Machine Expert) | **compiled here**, 0 errors, 0 warnings | **executed here** in CODESYS simulation mode: 20 of 20 | a visualization bound to station variables **compiled here** (0 errors, 0 warnings); no screenshot: simulation mode serves no WebVisu |
+> | Siemens: TIA Portal V18, S7-1513 | **compiled here** with the alarm block, 0 errors, 0 warnings; bench compiled and run in S7-PLCSIM in the earlier project | 20 of 20 in the float32 SCL translator (CI); S7-PLCSIM record of the earlier project | **not built**: KTP700 Basic created and networked by Openness, but connection, tags and screens could not be imported; the panel compile stops with 1 error (no start screen) |
+> | Allen-Bradley: Studio 5000 Logix Designer | **written, not compiled**: no Rockwell software here | 20 of 20 in a subset interpreter written in this repo (CI), not on a controller | **specification only** |
+>
+> **Not verified:** nothing was opened in Machine Expert, no Modicon controller or Harmony panel was used, nothing ran on a Logix controller or emulator, no panel runtime was started, no real task timing was measured. Pictures: the only one is [docs/img/screen_spec.svg](docs/img/screen_spec.svg), a **generated drawing** of the screen specification, not a screenshot.
 
 ## The question
 
-What has to change, and what must stay identical, when the control of one station moves between platforms; and how do you prove that the ports behave the same?
+What has to change, and what must stay identical, when the control and the operator screen of one station move between Siemens, a CODESYS-based controller and Allen-Bradley Logix; and how do you prove that the ports behave the same?
 
 ## The answer
 
-1. **The logic stayed identical. Three things had to change, and the compiler found each one.** The CODESYS port is the SCL text with the Siemens syntax taken off (`#`, `REGION`, quoted global names, named `LIMIT` arguments). On top of that the CODESYS compiler refused two things the TIA compiler accepts:
-   - `sT` as a variable name: 194 errors, starting with `C9 Unexpected token 'sT' found` (`results/codesys_build_attempt1.txt`). IEC identifiers are not case-sensitive, and `ST` is a keyword in CODESYS. Renamed to `sTim`.
-   - The bench writes the evaluation recipe straight into the evaluation instance inside the station (`#Station.Eval.GateX := ...`). CODESYS: 28 times `C37 'Eval' is no input of 'FB_HandleStation'` (`results/codesys_build_attempt2.txt`). The station now takes the recipe as a structure by reference (`ST_EvalRecipe`, `VAR_IN_OUT Rcp`) and copies it into its own evaluation instance at the tare, once per part.
+1. **The station logic stayed identical on all three. What changed was forced at the edges, and on two platforms a tool found each change.**
+   - CODESYS refused two things the TIA compiler accepts. `sT` as a variable name gave 194 errors, starting with `C9 Unexpected token 'sT' found` (`results/codesys_build_attempt1.txt`): names are not case-sensitive and `ST` is a keyword. The bench writes the recipe straight into the evaluation instance inside the station (`#Station.Eval.GateX := ...`): 28 times `C37 'Eval' is no input of 'FB_HandleStation'` (`results/codesys_build_attempt2.txt`). The station now takes the recipe as a structure by reference (`ST_EvalRecipe`) and copies it into its evaluation instance at the tare, once per part.
+   - Logix has the same wall, plus one more. An Add-On Instruction's Input and Output parameters may only be BOOL, SINT, INT, DINT or REAL (Rockwell 1756-PM010I p. 43), so the recipe with its envelope arrays and the counter array become InOut parameters. Local tags cannot be read from outside an AOI (p. 19), so the operator screen cannot reach `Station.Eval.FpG1` as it can on Siemens; the station AOI gets nine extra outputs for the screen. Arrays have a size, not bounds: `Array[1..32]` becomes `[33]` with element 0 unused.
+   - The Siemens panel reads the station through a standard-access data block (`DB_HMI`), because the station data is in optimized blocks and the panel connection used here is addressed absolutely.
 
-   After that: `Compile complete -- 0 errors, 0 warnings` (`results/codesys_build.txt`).
-
-2. **The ports behave the same on all 20 cases.** The bench replays 10 recorded curves in 14 evaluation cases and runs the station through 6 sequence cases (good part, wrong hand, reject lock, unhooked lever, three rejects in a row, acknowledge). Each case checks verdict, NOK code and nine curve elements against expected values with a tolerance of 0.001.
+2. **The ports behave the same on all 20 cases, where they could be run.** The bench replays 10 recorded curves in 14 evaluation cases and runs the station through 6 sequence cases (good part, wrong hand, reject lock, unhooked lever, three rejects in a row, acknowledge). Each case checks verdict, NOK code and nine curve elements against expected values, tolerance 0.001.
 
 | Platform | How it ran | Cases passed | Largest element difference | Bench calls |
 |---|---|---|---|---|
-| CODESYS V3.5 SP22 Patch 1, Control Win V3 x64 device, simulation mode | here, by script | **20 of 20** | 9.536743E-07 | 102 |
-| Siemens SCL in the float32 translator (`tools/scl37.py`) | here and in CI | **20 of 20** | 9.5367431640625e-07 | 102 |
-| Siemens S7-1513 in S7-PLCSIM Advanced V7.0 (TIA Portal V20) | in the earlier project, not rerun here | 20 of 20 | 7.629395E-06 | 102 |
-| Allen-Bradley Logix | not written, not run | - | - | - |
+| CODESYS V3.5 SP22 Patch 1, Control Win V3 x64 device, simulation mode | executed here, by script | **20 of 20** | 9.536743E-07 | 102 |
+| Siemens SCL in the float32 translator (`tools/scl37.py`) | executed here and in CI | **20 of 20** | 9.5367431640625e-07 | 102 |
+| Siemens S7-1513 in S7-PLCSIM Advanced V7.0 (TIA Portal V20) | earlier project, not rerun here | 20 of 20 | 7.629395E-06 | 102 |
+| Logix L5X in the subset interpreter (`tools/logix_st.py`) | executed here and in CI; **not a controller** | **20 of 20** | 9.5367431640625e-07 | 102 |
 
-   CODESYS and the translator agree to the last bit on the largest difference (2^-20). The simulated S7 CPU differs by one last bit somewhere (2^-17 is one step of a 32-bit Real between 64 and 128). Both are far below the tolerance, and no verdict moved.
+   CODESYS, the SCL translator and the Logix interpreter agree to the last bit on the largest difference (2^-20). The simulated S7 CPU differs by one last bit somewhere (2^-17). All are far below the tolerance, and no verdict moved. The Logix line shows only that the Structured Text in the L5X gives these results under the arithmetic the interpreter assumes (float32 per operation); how a Logix controller rounds was not read in a manual and not tested.
 
-3. **The one thing that decides whether the ports behave the same is the time base, and the bench cannot see it.** The blocks use no platform timer. Each block adds its `CycleTime` input on every call, and the station times part presence, clamp time-out and the reject warning that way. That is why the same text runs on both platforms. But it is only right if `CycleTime` equals the real period of the task that calls the block. In this run the CODESYS task ran every 10 ms while the bench passed `CycleTime := 0.002`, and the bench still passed 20 of 20, because the plant stand-in uses the same number. A port that calls the station from a task of another period, or from a free-running cycle, passes this bench and still times wrongly on the machine. The check has to be made where the task is configured.
+3. **The one thing that decides whether the ports behave the same is the time base, and the bench cannot see it.** The blocks use no platform timer. Each block adds its `CycleTime` input on every call, and the station times part presence, clamp time-out and the reject warning that way. That is why the same logic runs on all three. But it is only right if `CycleTime` equals the real period of the task that calls the station. In this run the CODESYS task ran every 10 ms while the bench passed `CycleTime := 0.002`, and the bench still passed 20 of 20, because the plant stand-in uses the same number. The Logix file puts the station in a periodic task with Rate 2 ms next to `CycleTime := 0.002`; the Siemens panel project calls it in OB1, which has no fixed period, and says so in the block. On every platform the check has to be made where the task is configured.
 
 ## Findings: what the port forced
 
-"Verified by": **executed here** (ran in this repo), **compiled here** (compiler output in `results/`), **earlier record** (run in the earlier project, not repeated), **not verified**.
+"Verified by": **executed here**, **compiled here** (compiler output in `results/`), **checked here** (structural check or interpreter in this repo, no vendor tool), **read in the vendor manual** (source named), **earlier record** (earlier project), **not verified**.
 
-| Topic | Siemens (TIA Portal SCL) | CODESYS V3.5 port | Verified by |
-|---|---|---|---|
-| Numeric types and rounding | Real 32-bit, Int 16-bit, DInt 32-bit | REAL, INT, DINT, same sizes; same text, no change | executed here: 20 of 20, max difference 9.536743E-07 |
-| Timers and time base | no TON; time = sum of `CycleTime` | unchanged; task set to 10 ms by script, bench passes 0.002 s | executed here (bench passed with the mismatch, see answer 3) |
-| Retention and start-up | test data blocks `NON_RETAIN` | plain `VAR_GLOBAL`, no `RETAIN`; behaviour after a warm or cold reset not tested | not verified |
-| Array indexing | `Array[1..32]`, `Array[0..63]` | same bounds kept | compiled and executed here |
-| Reading own outputs | the blocks write each output once at the end from static variables | accepted unchanged | compiled here |
-| Instance data | caller may write into `Station.Eval` | refused (C37); recipe by reference, copied at tare | compiled here (`codesys_build_attempt2.txt`), executed here |
-| Identifiers | `sT` accepted | refused: `ST` is a keyword, names not case-sensitive (C9) | compiled here (`codesys_build_attempt1.txt`) |
-| Global data | data blocks `"DB".member` | global variable lists, `{attribute 'qualified_only'}`, `GVL.member` | compiled and executed here |
-| Start values of data | `BEGIN` section of the data block | array initialisers in the declaration (`tools/testdata.py`) | executed here |
-| Syntax | `#local`, `REGION`, `LIMIT(MN:=, IN:=, MX:=)` | no `#`, `{region}` pragma, `LIMIT(mn, in, mx)` | compiled here |
-| Strings | not used in the blocks | not used | not verified |
-| Alarms | not built | not built | not verified |
-| HMI tag addressing | not built | not built | not verified |
-| Scan and task model | bench in OB1, 102 calls | bench in the cyclic MainTask, 102 calls | executed here; earlier record for OB1 |
+| Topic | Siemens (TIA Portal SCL) | CODESYS V3.5 | Logix (Studio 5000) | Verified by |
+|---|---|---|---|---|
+| Numeric types and rounding | Real 32-bit, Int 16-bit, DInt 32-bit | same sizes, same text | REAL, INT, DINT; mixed INT/REAL written without conversion functions | CODESYS executed here, max difference 9.536743E-07; Logix checked here under an assumed float32 rule, its real rounding not verified |
+| Timers and time base | no TON; time = sum of `CycleTime`; OB1 in the panel project | unchanged; task 10 ms, `CycleTime` 0.002 s | unchanged; periodic task Rate 2 ms written next to `CycleTime := 0.002` | CODESYS executed here (passed with the mismatch); Logix not verified |
+| Retention and start-up | data blocks `NON_RETAIN` | plain `VAR_GLOBAL`, no `RETAIN` | no first-scan handling written; Logix retention not read in a manual | not verified on any platform |
+| Array indexing | `Array[1..32]`, `Array[0..63]` | same bounds kept | size only: `[33]`, element 0 unused; `[64]` | CODESYS compiled and executed here; Logix checked here (interpreter raises on any index outside), form from public L5X examples |
+| Reading own outputs | blocks write each output once at the end | accepted unchanged | accepted by the interpreter | CODESYS compiled here; Logix not verified |
+| Instance data | caller writes into `Station.Eval`; panel can read it | refused (C37): recipe by reference, copied at tare | AOI Input/Output atomic only (PM010 p. 43): recipe and counters are InOut; locals not reachable (p. 19): nine `E_` outputs for the screen | CODESYS compiled here; Logix read in the vendor manual and checked here (rules A1, A2, S2) |
+| Nested instances | multi-instance `Eval` in the station | same | local tag of AOI type, nesting allowed (PM010 pp. 28-29) | CODESYS compiled here; Logix read in the vendor manual |
+| Calls | named parameters | named parameters | instance tag first, then required arguments (PM010 p. 76); inputs written as `Eval.Reset := 1` before the call | CODESYS compiled here; Logix read in the vendor manual, checked here (A7) |
+| Identifiers | `sT` accepted | refused, `ST` is a keyword (C9) | renamed as in CODESYS; names at most 40 characters (PM010 p. 41) | CODESYS compiled here; Logix checked here |
+| Global data | data blocks `"DB".member` | global variable lists, `qualified_only` | controller tags `TD_*`, `TR_*`; an AOI sees only its parameters and locals, so the bench is a routine, not an AOI | CODESYS compiled and executed here; Logix checked here (S2) |
+| Start values | `BEGIN` section | array initialisers | decorated tag data in the L5X | CODESYS executed here; Logix checked here (interpreter reads them) |
+| Strings | NOK reason as a code | as a code | as a code | not verified: no platform shows a text list in a run |
+| Alarms | `Program_Alarm` instances in the CPU (`FB_StationAlarms`) | not built | six `ALMD` instructions, syntax from RM003 pp. 44-46 | Siemens compiled here; Logix read in the vendor manual, not compiled; CODESYS not done |
+| HMI tag addressing | panel tags written absolute into `DB_HMI` (standard access); not imported | visualization reads `PLC_PRG.Bench.Station.Locked` by name | screen tags must be AOI parameters, not locals | Siemens: `DB_HMI` compiled here, tags not imported; CODESYS compiled here; Logix specification |
+| Scan and task model | bench in OB1, 102 calls | cyclic MainTask, 102 calls | continuous task for the bench, periodic task for the station | CODESYS executed here; S7 earlier record; Logix interpreter only |
 
-The short systems-engineering dossier (need, proof concept, requirements, architecture, verification, limits) is [DOSSIER.md](DOSSIER.md).
+## The Siemens panel: what was built and what is missing
+
+`siemens/scripts/tia_hmi.ps1` builds a TIA Portal V18 project through Openness without user interface (`results/tia_hmi_build.txt`):
+
+- S7-1513 with `FB_CurveEval`, `FB_HandleStation`, the alarm block `FB_StationAlarms` (six `Program_Alarm` instances), `DB_HMI` and OB1: `COMPILE PLC Success  errors=0  warnings=0`.
+- A KTP700 Basic (`6AV2 123-2GB03-0AX0`, device version 17.0.0.0; version 18.0.0.0 was not found in the catalogue), both devices on subnet `PN/IE_1` (PLC 192.168.0.1, panel 192.168.0.2).
+- **Missing: the HMI connection, the 36 HMI tags and the four screens.** The import files are in `siemens/hmi/xml/`, generated by `siemens/hmi/make_hmi_xml.py`, in the form of public Openness import code (no schema for these files is in the TIA Portal V18 installation). TIA refused them (`results/tia_hmi_build_attempts.txt`):
+  - connection, two runs: `The value 'SIMATIC S7 1500' for the attribute 'Driver' is not supported.`
+  - fallback with the tags as HMI-internal tags, two runs: `The import of tag TCycle was aborted, because the Coding property is read-only.`
+  - after a refused import, the next call failed with `Access to a disposed object`. The object was in turn the HMI target, the device, the project and the TIA Portal session. So one refused import ends the run, and every later step had to be retried in a new run.
+- With no screen the panel compile ends `COMPILE HMI ... Error  errors=1  warnings=0`, message `No start screen defined or the start screen has been deleted.`
+
+The screens were therefore not imported and not compiled. Their content is the one in the specification and in the import files. There is no picture of a WinCC screen. The WinCC runtime simulator was not started.
+
+
+The short systems-engineering dossier is [DOSSIER.md](DOSSIER.md). The Logix details, the manuals read and what each check proves: [logix/README.md](logix/README.md). The screen specification: [logix/PANELVIEW_SPEC.md](logix/PANELVIEW_SPEC.md), drawn in [docs/img/screen_spec.svg](docs/img/screen_spec.svg) (generated).
 
 ## How it was run
 
 ```
 python tools/testdata.py                       # CODESYS test data list from the Siemens data block
-powershell -ExecutionPolicy Bypass -File codesys\scripts\run_codesys.ps1
+powershell -ExecutionPolicy Bypass -File codesys\scripts\run_codesys.ps1                       # CODESYS build + bench
+powershell -ExecutionPolicy Bypass -File codesys\scripts\run_codesys.ps1 -Script visu_try.py   # CODESYS visualization
+python siemens/hmi/make_hmi_xml.py
+powershell -ExecutionPolicy Bypass -File siemens\scripts\tia_hmi.ps1                           # TIA Portal V18: PLC, panel device, network (-TryImports: the refused HMI imports)
+python tools/make_logix.py                      # logix/StationPort.L5X
+python tools/l5x_check.py                       # structural check
+python tools/logix_st.py                        # 20 cases in the subset interpreter
 python -m pytest -q
 ```
 
-`run_codesys.ps1` starts `CODESYS.exe --profile="CODESYS V3.5 SP22 Patch 1" --noUI --runscript=codesys\scripts\build_and_run.py` hidden. The script copies the installation's "Standard" project template, switches its device to CODESYS Control Win V3 x64 3.5.22.10, adds the sources from `codesys/src/`, rebuilds, writes every build message to `results/codesys_build.txt`, exports PLCopen XML to `codesys/plcopen/`, then sets simulation mode, logs in, starts, polls `GVL_TestResult.Done` and reads every result variable (`results/codesys_bench.json`). The bench finished 1.4 s after the start.
+CODESYS runs as `CODESYS.exe --profile="CODESYS V3.5 SP22 Patch 1" --noUI --runscript=...`, started hidden. TIA Portal runs through Openness with `TiaPortalMode.WithoutUserInterface`. No window of either tool was opened, and no panel runtime or simulator was started.
 
-`codesys/plcopen/*.xml` are the PLCopen XML exports of the data type, the four function blocks, the two global variable lists and the program, for import into a CODESYS-based tool. They were not imported into Machine Expert.
-
-## What was not done
-
-- **No operator screen on any platform.** The CODESYS script API of this installation showed no call that creates a visualization (`create_textlist` and `create_imagepool` exist; none of the visualization names tried exists), and a visualization of the sample project that ships with CODESYS came out empty when exported to PLCopen XML. A visualization would have to be drawn in the CODESYS window, which was not allowed here. No WebVisu ran, so there are no screenshots.
-- **Phase 2, the WinCC panel in TIA Portal V18 through Openness, was not started.** The time box ran out.
-- **Phase 3, the Allen-Bradley port (L5X files, Add-On Instructions, checks, interpreter, PanelView specification), was not written.** No Rockwell software is installed here, and no Rockwell manual was read for this repo, so nothing in it says anything about Logix.
-- The CODESYS run is a simulation inside the development system. No soft PLC, no real controller, no real task timing, no I/O.
-- Machine Expert, Modicon hardware and Harmony panels were not used.
+The CODESYS visualization is the visualization of the sample project that ships with CODESYS, exported in the native format by the script engine, with its five variables, texts and start visualization replaced by the station's (`codesys/scripts/derive_visu.py`). The first import built with 2 errors (`Start visualization <Diagnosis> does not exist`, `<Live_Visu>`), the second, with the start visualization renamed, with 0 errors and 0 warnings (`results/codesys_visu_attempt.txt`). Its layout and element types are the sample's, so it is not the screen of the specification. The derived files are not in the repo, because they are the vendor's sample. The simulation then ran, but `http://localhost:8080/webvisu.htm` gave "Unable to connect to the remote server": simulation mode serves no WebVisu, so there is no screenshot.
 
 ## Repo map
 
 | Path | Content |
 |---|---|
 | `siemens/scl/` | The Siemens SCL blocks and test bench, copied from the door-handle project |
+| `siemens/scl/hmi/` | Alarm block with `Program_Alarm`, the panel's data block `DB_HMI`, OB1 for the panel project |
+| `siemens/hmi/` | Generator of the WinCC import files and the files (refused by TIA, see above) |
+| `siemens/scripts/tia_hmi.ps1` | TIA Portal V18 Openness build: PLC with alarms, panel device, network |
 | `codesys/src/` | CODESYS V3.5 port: `ST_EvalRecipe`, `FB_CurveEval`, `FB_HandleStation`, bench, plant stand-in, global lists, `PLC_PRG` |
-| `codesys/scripts/` | Headless build-and-run script for the CODESYS script engine and its PowerShell starter |
-| `codesys/plcopen/` | PLCopen XML exported by CODESYS |
-| `tools/testdata.py` | Test data from the Siemens data block to the CODESYS list and `results/testdata.json` |
-| `tools/scl37.py` | SCL translator (float32), copied from the door-handle project |
-| `results/` | Build records of the three CODESYS attempts, bench result |
+| `codesys/scripts/` | Headless build-and-run, visualization try, its derivation |
+| `codesys/plcopen/` | PLCopen XML exported by CODESYS (not imported anywhere) |
+| `logix/` | `StationPort.L5X` (not compiled), its ST sources, README with the manuals read, PanelView specification |
+| `tools/` | test data, SCL translator, L5X generator, structural check, Logix subset interpreter, screen drawing |
+| `results/` | Build records, bench results, check output |
+| `tests/` | CI: Siemens bench in the translator, generated files, run records, L5X checks and interpreter |
 | `DOSSIER.md` | Short dossier |
-| `tests/` | CI: Siemens bench in the translator, generated test data, CODESYS run record |
 
 MIT licence.

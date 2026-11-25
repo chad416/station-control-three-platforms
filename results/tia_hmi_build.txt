@@ -1,0 +1,40 @@
+﻿TIA Portal V18 Openness, no user interface, 2026-11-25 18:20
+devices: OrderNumber:6ES7 513-1AL02-0AB0/V2.9 / OrderNumber:6AV2 123-2GB03-0AX0/17.0.0.0
+generated FB_CurveEval
+generated FB_HandleStation
+generated FB_StationAlarms
+generated DB_HMI
+generated OB_Station
+step: compile PLC
+COMPILE PLC Success  errors=0  warnings=0
+  Success  PLC_1  
+    Success  Program blocks  
+      Success  FB_HandleStation (FB2)  Block was successfully compiled.
+      Success  FB_CurveEval (FB1)  Block was successfully compiled.
+      Success  Main (OB1)  Block was successfully compiled.
+      Success  FB_StationAlarms (FB3)  Block was successfully compiled.
+  Success    Compiling finished (errors: 0; warnings: 0)
+DB_HMI number 1
+  block FB_CurveEval  FB 1  consistent=True
+  block FB_HandleStation  FB 2  consistent=True
+  block FB_StationAlarms  FB 3  consistent=True
+  block DB_HMI  GlobalDB 1  consistent=True
+  block DB_Station  InstanceDB 2  consistent=True
+  block DB_StationAlarms  InstanceDB 3  consistent=True
+  block Main  OB 1  consistent=True
+network: X1 and X1 on PN/IE_1  PLC 192.168.0.1  HMI 192.168.0.2
+HMI imports SKIPPED: connection, tags and screens could not be imported (results/tia_hmi_build_attempts.txt).
+  A failed Openness import disposed the HMI target, then the device, then the project, then the TIA Portal session.
+COMPILE HMI (device with no connection, tags or screens) Error  errors=1  warnings=0
+  Error  HMI_1  
+    Information    Software compilation started.
+    Error  Runtime settings  
+      Error    No start screen defined or the start screen has been deleted.
+    Information    Software compilation completed (device version: 17.0.0.0).
+  Error    Compiling aborted (errors: 1; warnings: 0)
+COMPILE PLC (again, after the network) Success  errors=0  warnings=0
+  Information  PLC_1  
+    Information  Program blocks  
+      Information    No block was compiled. All blocks are up-to-date.
+  Success    Compiling finished (errors: 0; warnings: 0)
+

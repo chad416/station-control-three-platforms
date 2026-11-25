@@ -1,0 +1,49 @@
+// Interface data block for the panel: standard (not optimized) access, fixed offsets, so that the
+// panel can address it absolutely (%DBn.DBW0 ...) over a non-integrated connection. Written by OB1
+// from DB_Station every cycle. Offsets are listed in siemens/hmi/make_hmi_xml.py.
+DATA_BLOCK "DB_HMI"
+{ S7_Optimized_Access := 'FALSE' }
+VERSION : 0.1
+NON_RETAIN
+   STRUCT
+      State : Int;   // 0
+      Verdict : Int;   // 2
+      NokCode : Int;   // 4
+      FaultCode : Int;   // 6
+      CntConsecNok : Int;   // 8
+      Locked : Bool;   // 10.0
+      RigCheck : Bool;   // 10.1
+      CallOperator : Bool;   // 10.2
+      PartPresent : Bool;   // 10.3
+      TCycle : Real;   // 12
+      CntTotal : DInt;   // 16
+      CntOk : DInt;   // 20
+      CntNok : DInt;   // 24
+      CntRejectConfirmed : DInt;   // 28
+      FpG1 : Real;   // 32
+      FrG1 : Real;   // 36
+      FMean : Real;   // 40
+      FHyst : Real;   // 44
+      FpG2 : Real;   // 48
+      FPeak : Real;   // 52
+      XPeak : Real;   // 56
+      FStep : Real;   // 60
+      XStop : Real;   // 64
+      MeanLo : Real;   // 68
+      MeanHi : Real;   // 72
+      HystLo : Real;   // 76
+      HystHi : Real;   // 80
+      G2Lo : Real;   // 84
+      G2Hi : Real;   // 88
+      PeakFLo : Real;   // 92
+      PeakFHi : Real;   // 96
+      PeakXMin : Real;   // 100
+      PeakXMax : Real;   // 104
+      StepLo : Real;   // 108
+      StopXLo : Real;   // 112
+      StopXHi : Real;   // 116
+   END_STRUCT;
+
+BEGIN
+
+END_DATA_BLOCK

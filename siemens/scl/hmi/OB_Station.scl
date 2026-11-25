@@ -1,0 +1,71 @@
+// The station on the machine with its alarms, for the panel project. The I/O mapping is not part of it.
+DATA_BLOCK "DB_Station"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+NON_RETAIN
+"FB_HandleStation"
+
+BEGIN
+
+END_DATA_BLOCK
+
+DATA_BLOCK "DB_StationAlarms"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+NON_RETAIN
+"FB_StationAlarms"
+
+BEGIN
+
+END_DATA_BLOCK
+
+ORGANIZATION_BLOCK "Main"
+TITLE = Station and alarms
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+//  For this compile the station is called in OB1. On the machine it belongs in a cyclic interrupt
+//  OB whose cycle equals CycleTime (2 ms): every timer of the station is the sum of CycleTime.
+BEGIN
+	"DB_Station"(CycleTime := 0.002);
+	"DB_StationAlarms"(FaultCode := "DB_Station".FaultCode,
+	                   Locked := "DB_Station".Locked,
+	                   CallOperator := "DB_Station".QCallOperator,
+	                   RigCheck := "DB_Station".RigCheckRequired);
+	// the panel's copy; the curve elements and limits are read from the evaluation instance inside the station
+	"DB_HMI".State := "DB_Station".State;
+	"DB_HMI".Verdict := "DB_Station".Verdict;
+	"DB_HMI".NokCode := "DB_Station".NokCode;
+	"DB_HMI".FaultCode := "DB_Station".FaultCode;
+	"DB_HMI".CntConsecNok := "DB_Station".CntConsecNok;
+	"DB_HMI".Locked := "DB_Station".Locked;
+	"DB_HMI".RigCheck := "DB_Station".RigCheckRequired;
+	"DB_HMI".CallOperator := "DB_Station".QCallOperator;
+	"DB_HMI".PartPresent := "DB_Station".PartPresent;
+	"DB_HMI".TCycle := "DB_Station".TCycle;
+	"DB_HMI".CntTotal := "DB_Station".CntTotal;
+	"DB_HMI".CntOk := "DB_Station".CntOk;
+	"DB_HMI".CntNok := "DB_Station".CntNok;
+	"DB_HMI".CntRejectConfirmed := "DB_Station".CntRejectConfirmed;
+	"DB_HMI".FpG1 := "DB_Station".Eval.FpG1;
+	"DB_HMI".FrG1 := "DB_Station".Eval.FrG1;
+	"DB_HMI".FMean := "DB_Station".Eval.FMean;
+	"DB_HMI".FHyst := "DB_Station".Eval.FHyst;
+	"DB_HMI".FpG2 := "DB_Station".Eval.FpG2;
+	"DB_HMI".FPeak := "DB_Station".Eval.FPeak;
+	"DB_HMI".XPeak := "DB_Station".Eval.XPeak;
+	"DB_HMI".FStep := "DB_Station".Eval.FStep;
+	"DB_HMI".XStop := "DB_Station".Eval.XStop;
+	"DB_HMI".MeanLo := "DB_Station".Eval.MeanLo;
+	"DB_HMI".MeanHi := "DB_Station".Eval.MeanHi;
+	"DB_HMI".HystLo := "DB_Station".Eval.HystLo;
+	"DB_HMI".HystHi := "DB_Station".Eval.HystHi;
+	"DB_HMI".G2Lo := "DB_Station".Eval.G2Lo;
+	"DB_HMI".G2Hi := "DB_Station".Eval.G2Hi;
+	"DB_HMI".PeakFLo := "DB_Station".Eval.PeakFLo;
+	"DB_HMI".PeakFHi := "DB_Station".Eval.PeakFHi;
+	"DB_HMI".PeakXMin := "DB_Station".Eval.PeakXMin;
+	"DB_HMI".PeakXMax := "DB_Station".Eval.PeakXMax;
+	"DB_HMI".StepLo := "DB_Station".Eval.StepLo;
+	"DB_HMI".StopXLo := "DB_Station".Eval.StopXLo;
+	"DB_HMI".StopXHi := "DB_Station".Eval.StopXHi;
+END_ORGANIZATION_BLOCK

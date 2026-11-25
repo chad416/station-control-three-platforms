@@ -1,0 +1,32 @@
+FUNCTION_BLOCK "FB_StationAlarms"
+TITLE = Alarms of the force-travel station, the S7-1500 way: one Program_Alarm per condition
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : chad416
+VERSION : 0.1
+//  The alarms live in the CPU. A panel with "alarm procedures" shows them in its alarm view
+//  without HMI alarm configuration. The alarm texts are set in the alarm properties of each
+//  instance; an SCL source cannot carry them.
+   VAR_INPUT
+      FaultCode : Int;   // FB_HandleStation.FaultCode
+      Locked : Bool;   // FB_HandleStation.Locked
+      CallOperator : Bool;   // FB_HandleStation.QCallOperator
+      RigCheck : Bool;   // FB_HandleStation.RigCheckRequired
+   END_VAR
+
+   VAR
+      SafetyOpen {InstructionName := 'Program_Alarm'; LibVersion := '1.0'} : Program_Alarm;   // fault 1
+      DriveNotReady {InstructionName := 'Program_Alarm'; LibVersion := '1.0'} : Program_Alarm;   // fault 2
+      ClampTimeout {InstructionName := 'Program_Alarm'; LibVersion := '1.0'} : Program_Alarm;   // fault 3
+      TareFailed {InstructionName := 'Program_Alarm'; LibVersion := '1.0'} : Program_Alarm;   // fault 4
+      RejectWaiting {InstructionName := 'Program_Alarm'; LibVersion := '1.0'} : Program_Alarm;
+      RigCheckReq {InstructionName := 'Program_Alarm'; LibVersion := '1.0'} : Program_Alarm;
+   END_VAR
+
+BEGIN
+	#SafetyOpen(SIG := #FaultCode = 1);
+	#DriveNotReady(SIG := #FaultCode = 2);
+	#ClampTimeout(SIG := #FaultCode = 3);
+	#TareFailed(SIG := #FaultCode = 4);
+	#RejectWaiting(SIG := #Locked AND #CallOperator);
+	#RigCheckReq(SIG := #RigCheck);
+END_FUNCTION_BLOCK
